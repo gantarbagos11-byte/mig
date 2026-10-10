@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MIGSOCK — Login</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#020617;color:#e8f4ff}body{display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at 20% 0%,#172554 0,#08152c 38%,#020617 100%)}
+.card{width:min(430px,100%);padding:28px;border:1px solid rgba(46,176,255,.35);border-radius:28px;background:rgba(4,16,35,.88);box-shadow:0 25px 80px rgba(0,0,0,.45),0 0 40px rgba(0,130,255,.08);backdrop-filter:blur(18px)}
+.brand{text-align:center;margin-bottom:26px}.brand img{width:105px;height:80px;object-fit:contain}.brand h1{margin:2px 0 4px;font-size:30px;letter-spacing:3px}.brand h1 span{color:#20bfff}.brand small{color:#75a9d3;letter-spacing:2px}
+label{display:block;margin:0 0 8px;color:#8eb9dd;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px}input{width:100%;height:52px;border:1px solid #24466b;border-radius:15px;background:#020c1e;color:#fff;padding:0 15px;font-size:15px;outline:none;margin-bottom:15px}input:focus{border-color:#20bfff;box-shadow:0 0 0 3px rgba(32,191,255,.12)}button{width:100%;height:54px;border:0;border-radius:16px;color:white;font-weight:900;font-size:14px;letter-spacing:.5px;background:linear-gradient(110deg,#09bdfb,#4d42ff);box-shadow:0 14px 30px rgba(38,113,255,.22);cursor:pointer}button:disabled{opacity:.6}.error{display:none;margin:0 0 14px;padding:11px 13px;border-radius:12px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#ff9ba8;font-size:12px}.hint{text-align:center;color:#6d92b7;font-size:10px;margin-top:18px}.admin-link{display:block;text-align:center;margin-top:14px;color:#54ccff;text-decoration:none;font-size:11px}
+
+/* MIGSOCK mobile-first visual refresh v2 — CSS only */
+:root{color-scheme:dark}html,body{min-height:100%;background:#080c19;color:#f5f7ff;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}body{padding:max(16px,env(safe-area-inset-top)) 14px max(16px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 0% 0%,rgba(73,92,255,.25),transparent 42%),radial-gradient(ellipse at 100% 100%,rgba(26,215,255,.12),transparent 35%),#080c19}.card{width:min(420px,100%);padding:clamp(21px,6vw,32px);border:1px solid rgba(116,153,255,.28);border-radius:26px;background:linear-gradient(145deg,rgba(21,30,57,.97),rgba(10,16,32,.98));box-shadow:0 25px 70px rgba(0,0,0,.4),inset 0 1px rgba(255,255,255,.06);position:relative;overflow:hidden}.card:before{content:"";position:absolute;top:-80px;left:calc(50% - 100px);width:200px;height:140px;border-radius:50%;background:rgba(60,193,255,.1);filter:blur(35px);pointer-events:none}.brand{position:relative;margin-bottom:27px}.brand img{width:100px;height:78px;object-fit:contain}.brand h1{font-size:29px;font-weight:950;letter-spacing:2px}.brand h1 span{color:#44ddff}.brand small{color:#a1b4dd;font-size:10px;letter-spacing:1.5px}label{color:#c1cce7;font-size:10px;letter-spacing:1px}input{height:51px;border:1px solid #303d63;border-radius:14px;background:#080e20;color:white;font-size:15px}input:focus{border-color:#47dfff;box-shadow:0 0 0 3px rgba(57,231,255,.12)}button{height:52px;border-radius:14px;background:linear-gradient(110deg,#17bce9,#3d7cff 56%,#8b50f8);box-shadow:0 10px 24px rgba(64,110,255,.24);font-size:13px;font-weight:900;letter-spacing:.8px}button:active{transform:scale(.99)}.hint{color:#9aa9cc;font-size:11px;line-height:1.5}.admin-link{color:#70e5ff;font-size:12px;font-weight:700}.error{border-radius:13px}
+@media(max-width:380px){.card{padding:22px 18px;border-radius:22px}.brand{margin-bottom:22px}.brand h1{font-size:25px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+
+/* Login visual refresh; authentication logic unchanged */
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;background:radial-gradient(ellipse at 15% 0%,rgba(70,94,230,.28),transparent 43%),radial-gradient(ellipse at 100% 75%,rgba(168,85,247,.15),transparent 34%),#070b18!important;padding:16px!important}.card{width:min(430px,100%)!important;padding:clamp(22px,6vw,32px)!important;border-radius:26px!important;border:1px solid rgba(118,145,255,.27)!important;background:linear-gradient(145deg,rgba(19,28,57,.96),rgba(8,13,30,.97))!important;box-shadow:0 24px 65px rgba(0,0,0,.42)!important}.brand img{width:112px!important;height:84px!important;object-fit:contain!important;display:block!important;margin:0 auto 8px!important;padding:5px!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(79,124,255,.15),rgba(40,224,232,.06))!important}.brand h1{font-size:28px!important;letter-spacing:1.6px!important}.brand small{font-size:10px!important;letter-spacing:1.2px!important}input{min-height:52px!important;border-radius:14px!important;border:1px solid rgba(124,153,218,.25)!important;background:rgba(5,10,25,.82)!important;font-size:15px!important}button{min-height:52px!important;border-radius:14px!important;background:linear-gradient(120deg,#2879ff,#7355ff)!important;color:white!important;font-weight:850!important;box-shadow:0 8px 22px rgba(79,124,255,.23)!important}.admin-link{border-radius:12px!important}@media(max-width:380px){.card{padding:21px!important;border-radius:21px!important}}
+
+</style>
+</head><body>
+<div class="card">
+  <div class="brand"><img src="/static/logo.webp?v=3" alt="MIGSOCK"><h1>MIG<span>SOCK</span></h1><small>DUEL V2 • SECURE ACCESS</small></div>
+  <div id="error" class="error"></div>
+  <form id="loginForm">
+    <label>Username</label><input id="username" autocomplete="username" autocapitalize="none" required>
+    <label>Password</label><input id="password" type="password" autocomplete="current-password" required>
+    <button id="submit" type="submit">LOGIN</button>
+  </form>
+  <div class="hint">Akses hanya untuk akun yang telah didaftarkan.</div>
+  <a class="admin-link" href="/admin">Admin Panel</a>
+</div>
+<script>
+const form=document.getElementById('loginForm'),err=document.getElementById('error'),btn=document.getElementById('submit');
+function randomToken(bytes=32){const a=new Uint8Array(bytes);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('')}
+function deviceIdentity(usernameValue){
+  const account=String(usernameValue||'').trim().toLowerCase();
+  const idKey='migsock_device_id:'+account,secretKey='migsock_device_secret:'+account;
+  let id=localStorage.getItem(idKey),secret=localStorage.getItem(secretKey);
+  if(!id||!secret){id='dev_'+randomToken(16);secret=randomToken(32);localStorage.setItem(idKey,id);localStorage.setItem(secretKey,secret)}
+  return {deviceId:id,deviceSecret:secret,deviceLabel:((navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'Browser')+' device'};
+}
+form.addEventListener('submit',async e=>{e.preventDefault();err.style.display='none';btn.disabled=true;btn.textContent='MEMERIKSA...';try{const identity=deviceIdentity(document.getElementById('username').value);const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('username').value,password:document.getElementById('password').value,...identity})});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.error||'Login gagal');location.href=d.user?.role==='admin'?'/admin':'/app'}catch(e){err.textContent=e.message;err.style.display='block';btn.disabled=false;btn.textContent='LOGIN'}});
+</script>
+</body></html>

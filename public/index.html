@@ -1,0 +1,1489 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>migsock</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:#020617}body{margin:0;background:radial-gradient(circle at 20% 0%,#172554 0,#0f172a 38%,#020617 100%);background-attachment:fixed;color:#e5e7eb;font:14px Arial,sans-serif;min-height:100vh}.wrap{width:100%;max-width:920px;margin:auto;padding:10px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px;padding:8px 4px;animation:slideDown .45s ease-out}h1{margin:0;font-size:24px;letter-spacing:.3px}.api{font-size:10px;color:#94a3b8;text-align:right}.panel{background:rgba(15,23,42,.88);border:1px solid #263449;border-radius:14px;padding:11px;margin-bottom:10px;box-shadow:0 8px 24px rgba(0,0,0,.22);backdrop-filter:blur(8px);animation:fadeUp .45s ease both}.panel:nth-of-type(2){animation-delay:.04s}.panel:nth-of-type(3){animation-delay:.08s}.panel:nth-of-type(4){animation-delay:.12s}.panel:nth-of-type(5){animation-delay:.16s}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.field label{display:block;margin-bottom:4px;color:#cbd5e1;font-size:12px}.field.wide{grid-column:1/-1}
+input,button,select{font:inherit;border-radius:10px;border:1px solid #334155}input{width:100%;background:#080f1d;color:#fff;padding:10px;min-height:42px;outline:none;transition:border-color .2s,box-shadow .2s,transform .2s}input:focus{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.16)}button{padding:10px 12px;background:#1e293b;color:#fff;cursor:pointer;min-height:42px;font-weight:700;transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}button:hover{filter:brightness(1.12);box-shadow:0 5px 14px rgba(0,0,0,.22)}button:active{transform:scale(.96)}.primary{background:#2563eb}.danger{background:#b91c1c}.green{background:#166534}
+.cmdrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.timer-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.timer-tools .field{min-width:0}.timer-tools select{width:100%;min-height:42px;background:#080f1d;color:#fff;padding:10px;border:1px solid #334155}.cmdrow button{width:100%}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions button{width:100%}
+.roomrow{display:grid;grid-template-columns:minmax(0,1fr) repeat(3,minmax(72px,92px));gap:7px;align-items:end}.room-actions{margin-top:8px}.timer-grid{gap:7px}.kick-command{grid-template-columns:1fr 1fr}.kick-command input{min-width:0}.reset-timer{background:#475569}
+.listtitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}.listtitle span{color:#cbd5e1;font-size:12px}
+.lists-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+#userList,#targetList{width:100%;height:190px;background:rgba(2,6,23,.92);color:#e5e7eb;padding:5px;border-radius:10px;border:1px solid #334155;overflow-y:auto;scrollbar-width:thin;overscroll-behavior:contain}
+#targetList .target-item{display:flex;align-items:center;padding:8px 9px;border-bottom:1px solid #1f2937;line-height:1.2;word-break:break-word;animation:itemIn .22s ease both}
+#targetList .target-item:last-child{border-bottom:0}
+#targetList .empty{color:#64748b;padding:7px 8px}
+.trash-btn{width:34px;min-height:30px;height:30px;padding:3px 6px;font-size:17px;line-height:1;border-radius:7px}
+#userList .user-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-bottom:1px solid #1f2937;line-height:1.2;word-break:break-word;animation:itemIn .22s ease both}
+#userList .user-item:last-child{border-bottom:0}
+#userList .user-check{width:19px;min-width:19px;height:19px;min-height:19px;margin:0;accent-color:#3b82f6;cursor:pointer}
+#userList .empty{color:#64748b;padding:7px 8px}
+table{width:100%;border-collapse:collapse;background:#111827;border-radius:10px;overflow:hidden}th,td{padding:7px;border-bottom:1px solid #1f2937;text-align:left}th{color:#94a3b8;font-size:11px}
+td input{padding:8px;min-height:36px}.kick-overall{display:flex;flex-wrap:wrap;gap:6px;font-size:11px;color:#94a3b8}.kick-overall b{color:#fff}.kick-socket-head{display:flex;justify-content:space-between;gap:5px;align-items:center;margin-bottom:4px}.kick-socket-name{font-weight:800;color:#fff;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kick-socket-state{font-size:8px;font-weight:800;white-space:nowrap}.kick-socket-track{width:100%;height:7px;background:#020617;border:1px solid #334155;border-radius:999px;overflow:hidden}.kick-socket-fill{height:100%;width:0%;background:#22c55e;transition:none}.kick-socket-detail{display:flex;justify-content:space-between;gap:4px;margin-top:4px;font-size:9px}.kick-socket-stat{background:transparent;padding:0;min-width:0}.kick-socket-stat b{display:inline;font-size:9px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kick-socket-stat span{display:none}.kick-socket-last{margin-top:4px;font-size:8px;color:#94a3b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.password-cell{min-width:0}.password-wrap{display:flex;align-items:center;gap:5px;min-width:0}.password-wrap input{flex:1;min-width:0}.wallet-caption{display:inline-flex;align-items:center;justify-content:center;min-width:30px;padding:0 3px;font-size:14px;color:#22d3ee;white-space:nowrap;font-weight:800;flex:0 0 auto}.password-wrap input{min-width:0}.status-balloon{display:inline-block;width:11px;height:11px;border-radius:50%;background:#64748b;box-shadow:0 0 0 2px rgba(100,116,139,.14);vertical-align:middle}.status-balloon.connecting{background:#f59e0b;box-shadow:0 0 0 3px rgba(245,158,11,.14)}.status-balloon.online{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.14);animation:pulseOnline 1.8s ease-in-out infinite}.status-balloon.error{background:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.14)}.status-balloon.offline{background:#64748b}.status{font-weight:bold}.flat-report{margin-top:10px;border:1px solid rgba(148,163,184,.12);border-radius:10px;overflow:auto;background:rgba(3,7,18,.35)}.flat-report table{width:100%;min-width:760px;border-collapse:collapse;border:0;border-radius:0;background:transparent}.flat-report th,.flat-report td{padding:6px 7px;font-size:10px;white-space:nowrap}.flat-report .flat-ok{color:#22c55e;font-weight:800}.flat-report .flat-wait{color:#f59e0b;font-weight:800}.flat-report .flat-error{color:#ef4444;font-weight:800}.flat-summary{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:10px;color:#94a3b8}.flat-summary b{color:#fff}.flat-progress{height:7px;margin-top:8px;border-radius:999px;overflow:hidden;background:#020617;border:1px solid #334155}.flat-progress-fill{height:100%;width:0%;background:#22c55e;transition:width .15s linear}.offline{color:#94a3b8}.connecting{color:#f59e0b}.online{color:#22c55e}.error{color:#ef4444}
+.status{transition:color .2s}.online{animation:pulseOnline 1.8s ease-in-out infinite}.listtitle{min-height:30px}.listtitle span:first-child{font-weight:800;letter-spacing:.3px}@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}@keyframes itemIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}@keyframes pulseOnline{0%,100%{opacity:1}50%{opacity:.55}}.room-timer-row{display:grid;grid-template-columns:1fr 1.45fr 58px;gap:7px;align-items:end;margin-top:8px}.duel-settings-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.15fr;gap:7px;align-items:end;margin-top:8px}.kick-mode-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,.72fr);gap:7px;align-items:stretch;margin-top:8px}.kick-mode-stack{display:grid;grid-template-rows:1fr 1fr;gap:7px;min-width:0}.kick-mode-stack .field{min-width:0}.kick-mode-stack select{width:100%;min-height:42px}.kickall-side{width:100%;height:100%;min-height:91px;font-size:13px;font-weight:900;letter-spacing:.5px}.countdown-field label{font-size:14px;font-weight:900;letter-spacing:.8px}.countdown-field input{font-size:18px;font-weight:900;text-align:center;min-height:42px}.reset-field button{width:100%;min-height:42px;font-size:25px;font-weight:900;padding:0}.reset-timer{display:flex;align-items:center;justify-content:center}
+@media(max-width:600px){body{font-size:13px}.wrap{padding:7px}.top{align-items:flex-start;padding:5px 3px}.top h1{font-size:21px}.api{max-width:155px;line-height:1.25}.panel{padding:9px;border-radius:12px;margin-bottom:8px}.grid{grid-template-columns:1fr 1fr;gap:7px}.roomrow{grid-template-columns:minmax(0,1fr) 76px 76px 76px}.room-timer-row{grid-template-columns:1fr 1.35fr 48px}.duel-settings-row{grid-template-columns:1fr 1fr 1fr 1fr 1.15fr}.countdown-field label{font-size:13px}.countdown-field input{font-size:17px}.reset-field button{font-size:23px;min-height:40px}.roomrow .field button{width:100%;padding-left:5px;padding-right:5px;font-size:10px}.kick-command{grid-template-columns:1fr 1fr}.kick-mode-layout{grid-template-columns:minmax(0,1.12fr) minmax(108px,.88fr);gap:6px}.kick-mode-stack{gap:6px}.kick-mode-stack select{min-height:40px;font-size:11px;padding-left:8px;padding-right:24px}.kickall-side{min-height:86px;font-size:12px;padding:5px 7px}.actions{grid-template-columns:1fr 1fr}.lists-grid{gap:7px}#userList,#targetList{height:210px}.listtitle span{font-size:11px}.trash-btn{width:32px;min-height:30px;height:30px;font-size:16px}table{font-size:11px}th:nth-child(1),td:nth-child(1){width:25px}td,th{padding:4px}td input{padding:7px;font-size:11px;min-height:34px}.kick-socket-name{font-size:9px}.kick-socket-state{font-size:7px}.kick-socket-detail{font-size:8px}.kick-socket-stat b{font-size:8px}.kick-socket-last{font-size:7px}.wallet-caption{font-size:12px;min-width:28px}.status-balloon{width:10px;height:10px}}
+@media(max-width:380px){.grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.roomrow{grid-template-columns:minmax(0,1fr) 68px 68px 68px}.room-timer-row{grid-template-columns:1fr 1.25fr 46px}.roomrow .field button{font-size:9px;padding-left:3px;padding-right:3px}.actions{grid-template-columns:1fr}.cmdrow{grid-template-columns:1fr}.timer-tools{grid-template-columns:1fr 1fr}.lists-grid{grid-template-columns:1fr}#userList,#targetList{height:180px}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+    .login-actions{margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .login-actions button{min-height:42px}
+
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px;padding:4px;background:rgba(15,23,42,.88);border:1px solid #263449;border-radius:14px;position:sticky;top:8px;z-index:20;backdrop-filter:blur(10px)}
+    .tab-btn{min-height:44px;border:0;background:transparent;color:#94a3b8;border-radius:10px;font-weight:800;letter-spacing:.4px}
+    .tab-btn.active{background:#2563eb;color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.28)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block;animation:fadeUp .25s ease both}
+
+/* ===== PREMIUM UI SKIN ===== */
+:root{--bg:#030712;--panel:rgba(10,17,32,.82);--panel2:rgba(15,23,42,.74);--line:rgba(148,163,184,.16);--muted:#8190a8;--text:#f8fafc;--blue:#3b82f6;--cyan:#22d3ee;--violet:#8b5cf6;--green:#22c55e;--red:#ef4444}
+html{background:#020617}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(900px 450px at 8% -10%,rgba(59,130,246,.24),transparent 60%),radial-gradient(700px 420px at 100% 15%,rgba(139,92,246,.18),transparent 58%),radial-gradient(700px 500px at 50% 100%,rgba(34,211,238,.08),transparent 65%),#020617;letter-spacing:.1px}.wrap{max-width:980px;padding:14px}.hero{position:relative;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 4px 14px}.brand-wrap{display:flex;align-items:center;gap:11px}.brand-mark{width:104px;height:72px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;border-radius:12px;background:rgba(2,6,23,.18);overflow:hidden;box-shadow:0 0 22px rgba(59,130,246,.18),inset 0 1px rgba(255,255,255,.08)}.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}.brand-mark.logo-failed::after{content:"MIGSOCK";font-weight:900;font-size:14px;letter-spacing:1px;color:#60a5fa}.top h1{font-size:24px;font-weight:900;letter-spacing:1.5px}.brand-sub{margin-top:2px;color:#60a5fa;font-size:10px;font-weight:900;letter-spacing:1.6px;text-transform:uppercase}.brand-sub span{color:#3b82f6;margin:0 3px}.hero-chip{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(34,197,94,.2);border-radius:999px;background:rgba(34,197,94,.07);font-size:9px;font-weight:900;letter-spacing:1px;color:#86efac}.hero-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 10px #22c55e;animation:pulseOnline 1.8s ease-in-out infinite}
+.tabs{top:7px;margin-bottom:12px;padding:5px;border-radius:16px;background:rgba(3,7,18,.74);border:1px solid rgba(148,163,184,.14);box-shadow:0 12px 32px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.04)}.tab-btn{position:relative;min-height:46px;border-radius:12px;color:#71809a;font-size:12px;letter-spacing:1.1px;background:transparent}.tab-btn.active{background:linear-gradient(135deg,#2563eb,#4f46e5);box-shadow:0 8px 24px rgba(37,99,235,.28),inset 0 1px rgba(255,255,255,.22);color:white}.tab-btn.active:after{content:"";position:absolute;left:25%;right:25%;bottom:3px;height:2px;border-radius:9px;background:rgba(255,255,255,.85)}
+.panel{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(15,23,42,.88),rgba(5,11,23,.82));border:1px solid var(--line);border-radius:17px;padding:12px;margin-bottom:11px;box-shadow:0 14px 34px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035);backdrop-filter:blur(14px)}.panel:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(59,130,246,.035),transparent 35%,rgba(139,92,246,.025));}.panel:hover{border-color:rgba(96,165,250,.22)}
+.field label,.listtitle span{font-size:9px!important;text-transform:uppercase;letter-spacing:1px;font-weight:850;color:#7f8da5!important}.field label{margin-bottom:5px}input,select{background:rgba(2,6,23,.72);border-color:rgba(100,116,139,.27);border-radius:11px;color:#f8fafc;box-shadow:inset 0 1px rgba(255,255,255,.025)}input:hover,select:hover{border-color:rgba(96,165,250,.38)}input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.12),0 0 18px rgba(59,130,246,.08)}button{border-color:rgba(148,163,184,.16);border-radius:11px;background:linear-gradient(180deg,#1b273c,#111a2b);box-shadow:0 6px 14px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.06);font-size:11px;letter-spacing:.35px}button:hover{filter:brightness(1.13);transform:translateY(-1px)}button:active{transform:translateY(1px) scale(.98)}button.primary{background:linear-gradient(135deg,#2563eb,#4f46e5);border-color:rgba(147,197,253,.22);box-shadow:0 8px 22px rgba(37,99,235,.23),inset 0 1px rgba(255,255,255,.18)}button.danger{background:linear-gradient(135deg,#dc2626,#991b1b);border-color:rgba(248,113,113,.18);box-shadow:0 8px 22px rgba(220,38,38,.16)}button.green{background:linear-gradient(135deg,#059669,#166534);border-color:rgba(110,231,183,.18)}.reset-timer{background:linear-gradient(135deg,#475569,#1e293b)}
+#rows tr{transition:background .18s}#rows tbody tr:hover{background:rgba(59,130,246,.055)}table{background:rgba(3,7,18,.46);border:1px solid rgba(148,163,184,.09);border-radius:13px}th{background:rgba(30,41,59,.42);text-transform:uppercase;letter-spacing:.7px;font-size:9px;padding:9px;color:#71809a}td{border-bottom-color:rgba(51,65,85,.42);padding:7px}.status-balloon{box-shadow:0 0 0 3px rgba(100,116,139,.08)}.status-balloon.online{box-shadow:0 0 0 3px rgba(34,197,94,.1),0 0 12px rgba(34,197,94,.3)}
+#userList,#targetList{background:rgba(2,6,23,.55);border-color:rgba(100,116,139,.2);border-radius:13px}#userList .user-item,#targetList .target-item{border-bottom-color:rgba(51,65,85,.38);transition:background .15s,transform .15s}#userList .user-item:hover,#targetList .target-item:hover{background:rgba(59,130,246,.07);transform:translateX(2px)}#userList .user-check{accent-color:#3b82f6}.trash-btn{background:rgba(220,38,38,.12)!important;border-color:rgba(248,113,113,.18)!important}.kick-socket-track{background:#020617;border-color:rgba(100,116,139,.18)}
+@media(max-width:600px){.wrap{padding:8px}.hero{padding:8px 2px 11px}.brand-mark{width:60px;height:48px;border-radius:10px}.top h1{font-size:20px}.brand-sub{font-size:8px;letter-spacing:1.1px}.hero-chip{padding:6px 8px;font-size:8px}.panel{border-radius:15px;padding:10px}.tab-btn{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.hero-dot{animation:none}}
+
+
+.setting-row{display:grid;gap:8px;align-items:end}.troop-row{grid-template-columns:minmax(0,2fr) minmax(72px,.8fr) minmax(72px,.8fr) minmax(118px,1.1fr)}.pass-row{grid-template-columns:minmax(0,3fr) minmax(118px,1fr);margin-top:9px}.save-row{grid-template-columns:minmax(0,3fr) minmax(90px,1fr) minmax(90px,1fr)}.setting-row .field{min-width:0}.setting-row input,.setting-row button{width:100%;min-width:0}.setting-row button{white-space:nowrap}
+@media(max-width:560px){.wrap{padding:8px}.troop-row{grid-template-columns:minmax(0,1.65fr) minmax(58px,.7fr) minmax(58px,.7fr) minmax(94px,1fr)}.save-row{grid-template-columns:minmax(0,2fr) minmax(70px,.75fr) minmax(70px,.75fr)}.pass-row{grid-template-columns:minmax(0,2fr) minmax(94px,1fr)}.setting-row{gap:6px}.setting-row input,.setting-row button{font-size:12px;padding-left:8px;padding-right:8px}}
+
+
+/* ===== MOBILE NEON UI V2 ===== */
+:root{--neon-cyan:#16d9ff;--neon-blue:#278cff;--neon-violet:#7357ff;--neon-green:#20e78a;--glass:rgba(7,18,39,.82);--glass2:rgba(4,13,29,.88)}
+html,body{min-height:100%;background:#020815}
+body{background:radial-gradient(700px 420px at 50% -80px,rgba(0,145,255,.20),transparent 62%),radial-gradient(520px 420px at 100% 28%,rgba(111,71,255,.18),transparent 65%),linear-gradient(180deg,#031024 0%,#020714 48%,#01040b 100%);color:#f7fbff;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.25;background:linear-gradient(125deg,transparent 0 58%,rgba(26,141,255,.08) 58.2% 59%,transparent 59.2% 68%,rgba(113,76,255,.06) 68.2% 69%,transparent 69.2%);z-index:-1}
+.wrap{max-width:980px;padding:14px 16px 24px}
+.hero{padding:12px 4px 16px;margin-bottom:8px}
+.brand-wrap{gap:14px}.brand-mark{width:112px;height:78px;background:transparent;box-shadow:none}.brand-mark img{filter:drop-shadow(0 8px 14px rgba(0,150,255,.22))}.top h1{font-size:29px;line-height:1;font-weight:950;letter-spacing:2px}.brand-sub{font-size:11px;letter-spacing:2px;color:#8dbfff;margin-top:6px}.hero-chip{min-width:122px;justify-content:center;padding:10px 14px;border-radius:999px;border:1px solid rgba(32,231,138,.5);background:rgba(10,55,45,.22);font-size:12px;box-shadow:0 0 24px rgba(32,231,138,.08),inset 0 1px rgba(255,255,255,.08)}.hero-dot{width:10px;height:10px}
+.tabs{margin-bottom:14px;padding:5px;border-radius:19px;background:rgba(2,8,20,.78);border:1px solid rgba(103,142,204,.20);box-shadow:0 14px 34px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.04)}.tab-btn{min-height:56px;border-radius:15px;font-size:16px;font-weight:900;letter-spacing:1.4px}.tab-btn.active{background:linear-gradient(105deg,#13bdf5 0%,#376cff 45%,#7248ff 100%);box-shadow:0 10px 30px rgba(39,140,255,.28),inset 0 1px rgba(255,255,255,.28)}.tab-btn.active:before{content:"⚙";margin-right:10px}.tab-btn#tabDuel.active:before{content:"⚔"}.tab-btn.active:after{left:22%;right:22%;bottom:5px;height:3px}
+.panel{background:linear-gradient(145deg,rgba(7,24,49,.86),rgba(3,11,25,.90));border:1px solid rgba(22,183,255,.30);border-radius:19px;padding:16px;margin-bottom:13px;box-shadow:0 16px 38px rgba(0,0,0,.28),0 0 30px rgba(0,111,255,.055),inset 0 1px rgba(255,255,255,.045);backdrop-filter:blur(18px)}.panel:after{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(36,201,255,.65),transparent);opacity:.75}
+.section-heading{position:relative;display:flex;align-items:center;gap:11px;margin:0 0 14px;padding:1px 0 12px;border-bottom:1px solid rgba(54,116,190,.20)}.section-heading .section-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:rgba(0,190,255,.09);color:#45d9ff;font-size:22px;filter:drop-shadow(0 0 9px rgba(22,217,255,.24))}.section-heading strong{display:block;font-size:17px;letter-spacing:.2px;color:#eaf8ff}.section-heading small{display:block;margin-top:3px;color:#7ea4c9;font-size:10px;letter-spacing:.2px}.compact-heading{margin-bottom:10px}.troop-heading{align-items:center}.count-pill{margin-left:auto;border:1px solid rgba(32,231,138,.55);background:rgba(32,231,138,.06);color:#5df3ac;border-radius:999px;padding:7px 11px;font-size:10px;font-weight:900;white-space:nowrap}
+.field label,.listtitle span{color:#8eb0d3!important;font-size:10px!important;font-weight:900;letter-spacing:1.1px}.field label{margin-bottom:6px}
+input,select{min-height:48px;background:linear-gradient(180deg,rgba(3,14,31,.94),rgba(2,9,21,.92));border:1px solid rgba(69,130,202,.42);border-radius:13px;box-shadow:inset 0 1px rgba(255,255,255,.025),0 0 0 1px rgba(0,0,0,.12);font-size:14px}input:focus,select:focus{border-color:rgba(22,217,255,.8);box-shadow:0 0 0 3px rgba(22,217,255,.10),0 0 20px rgba(22,140,255,.10)}
+button{min-height:48px;border-radius:13px;font-size:12px;font-weight:900;letter-spacing:.45px;background:linear-gradient(180deg,#152b48,#0b1930);border:1px solid rgba(85,145,208,.32);box-shadow:0 8px 18px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08)}button.primary{background:linear-gradient(110deg,#11c6f6,#3c72ff 52%,#7547ff);box-shadow:0 10px 24px rgba(39,140,255,.24),inset 0 1px rgba(255,255,255,.22)}button.danger{background:linear-gradient(110deg,#ef476f,#bd214c);box-shadow:0 10px 24px rgba(220,38,90,.20)}button.green{background:linear-gradient(110deg,#16d98a,#079b79);box-shadow:0 10px 24px rgba(32,231,138,.15)}
+.troop-row{grid-template-columns:minmax(0,2fr) minmax(74px,.72fr) minmax(74px,.72fr) minmax(128px,1fr)}.pass-row{grid-template-columns:minmax(0,3fr) minmax(128px,1fr)}.save-row{grid-template-columns:minmax(0,3fr) minmax(100px,1fr) minmax(100px,1fr)}
+#rows{margin-top:2px}table{border:1px solid rgba(53,116,187,.24);border-radius:15px;background:rgba(2,10,23,.58)}th{padding:11px 9px;background:rgba(17,43,74,.44);color:#83a7cc;font-size:9px}td{padding:8px 9px;border-bottom-color:rgba(52,96,145,.25)}td input{min-height:40px;padding:8px 10px;background:rgba(2,10,23,.74)}#rows tr:last-child td{border-bottom:0}
+.status-balloon{width:12px;height:12px}.status-balloon.online{box-shadow:0 0 0 3px rgba(32,231,138,.12),0 0 14px rgba(32,231,138,.48)}
+.login-actions{margin-top:13px}.login-actions button{min-height:50px}
+.lists-grid{gap:10px;margin-top:0}#userList,#targetList{height:230px;background:rgba(1,8,19,.74);border:1px solid rgba(58,119,183,.30);border-radius:14px;padding:6px}.listtitle{min-height:34px}.listtitle span:first-child{color:#a9c9e8!important;font-size:11px!important}.listtitle span:last-child{color:#4fdfff!important;font-weight:900}
+#userList .user-item,#targetList .target-item{padding:10px;border-bottom-color:rgba(58,101,145,.25)}#userList .user-check{width:20px;height:20px;accent-color:#22baff}
+.roomrow{grid-template-columns:minmax(0,1fr) 100px 100px 100px;margin-top:11px}.room-timer-row{grid-template-columns:1fr 1.35fr 62px}.duel-settings-row{grid-template-columns:1fr 1fr 1fr 1fr 1.15fr}.kick-mode-layout{grid-template-columns:minmax(0,1fr) minmax(135px,.55fr);gap:10px}.kick-mode-stack{gap:9px}.kickall-side{min-height:105px;background:linear-gradient(135deg,#f04469,#a91649);box-shadow:0 14px 28px rgba(239,68,68,.22),inset 0 1px rgba(255,255,255,.15);font-size:15px}
+.reset-timer{background:linear-gradient(135deg,#174f83,#17304e);font-size:24px!important}
+@media(max-width:700px){.wrap{padding:9px 10px 20px}.hero{padding:7px 1px 13px}.brand-mark{width:74px;height:58px}.top h1{font-size:24px}.brand-sub{font-size:9px}.hero-chip{min-width:106px;padding:9px 11px;font-size:10px}.tabs{margin-bottom:11px}.tab-btn{min-height:50px;font-size:14px}.panel{padding:13px;border-radius:17px}.section-heading{margin-bottom:11px}.section-heading strong{font-size:15px}.section-heading small{font-size:9px}.section-icon{transform:scale(.92)}.troop-row{grid-template-columns:minmax(0,1.6fr) minmax(58px,.68fr) minmax(58px,.68fr) minmax(100px,.95fr)}.pass-row{grid-template-columns:minmax(0,2fr) minmax(104px,.9fr)}.save-row{grid-template-columns:minmax(0,2fr) minmax(74px,.72fr) minmax(74px,.72fr)}.roomrow{grid-template-columns:minmax(0,1fr) 78px 78px 78px}.roomrow .field button{font-size:9px}.duel-settings-row{grid-template-columns:1fr 1fr 1fr 1fr 1.15fr}.kick-mode-layout{grid-template-columns:minmax(0,1fr) 115px}.kickall-side{min-height:91px;font-size:13px}.count-pill{padding:6px 9px}}
+@media(max-width:520px){.wrap{padding:8px}.hero{align-items:center}.brand-mark{width:62px;height:52px}.top h1{font-size:21px;letter-spacing:1.5px}.brand-sub{font-size:8px;letter-spacing:1.1px}.hero-chip{min-width:88px;padding:8px 9px;font-size:9px}.hero-dot{width:8px;height:8px}.panel{padding:11px;margin-bottom:9px}.section-heading .section-icon{width:30px;height:30px;font-size:19px}.section-heading strong{font-size:14px}.section-heading small{font-size:8px}.troop-row{grid-template-columns:minmax(0,1.55fr) minmax(54px,.68fr) minmax(54px,.68fr) minmax(94px,.9fr)}.pass-row{grid-template-columns:minmax(0,1.8fr) minmax(96px,.9fr)}.save-row{grid-template-columns:minmax(0,1.8fr) minmax(70px,.7fr) minmax(70px,.7fr)}input,select{min-height:44px;font-size:13px}.setting-row input,.setting-row button{font-size:11px;padding-left:7px;padding-right:7px}.roomrow{grid-template-columns:minmax(0,1fr) 66px 66px 66px}.roomrow .field button{font-size:8px;letter-spacing:.1px}.room-timer-row{grid-template-columns:1fr 1.25fr 48px}.duel-settings-row{grid-template-columns:1fr 1fr 1fr 1fr 1.05fr}.kick-mode-layout{grid-template-columns:minmax(0,1fr) 105px}.kickall-side{min-height:84px;font-size:12px}.lists-grid{gap:7px}#userList,#targetList{height:205px}th{font-size:8px;padding:9px 5px}td{padding:6px 5px}td input{font-size:10px;padding:7px 6px}.count-pill{font-size:8px}.login-actions button{min-height:46px}}
+@media(max-width:390px){.wrap{padding:7px}.brand-mark{width:56px;height:48px}.top h1{font-size:19px}.hero-chip{min-width:80px;font-size:8px}.troop-row{grid-template-columns:minmax(0,1.4fr) minmax(50px,.65fr) minmax(50px,.65fr) minmax(88px,.85fr)}.save-row{grid-template-columns:minmax(0,1fr) 66px 66px}.pass-row{grid-template-columns:minmax(0,1fr) 90px}.roomrow{grid-template-columns:minmax(0,1fr) 59px 59px 59px}.duel-settings-row{grid-template-columns:1fr 1fr 1fr 1fr}.kick-mode-layout{grid-template-columns:minmax(0,1fr) 96px}.kickall-side{font-size:11px}.section-heading small{display:none}}
+
+/* MIGSOCK mobile-first visual refresh v2 — CSS only */
+:root{color-scheme:dark;--bg:#070b18;--surface:#10172b;--surface2:#141e36;--line:rgba(148,163,255,.18);--text:#f4f6ff;--muted:#9ba9c8;--cyan:#39e7ff;--blue:#4f8cff;--violet:#a16bff;--pink:#ff5cba;--green:#3ee6a8;--red:#ff5577}
+html{background:var(--bg);scroll-behavior:smooth}body{background:radial-gradient(ellipse at 10% -10%,rgba(72,87,255,.24),transparent 42%),radial-gradient(ellipse at 100% 18%,rgba(0,217,255,.11),transparent 34%),linear-gradient(180deg,#0b1022 0%,#070b18 60%,#090d1b 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;padding-bottom:env(safe-area-inset-bottom)}
+.wrap{max-width:760px;padding:clamp(10px,3vw,20px);padding-top:max(10px,env(safe-area-inset-top))}.top.hero{position:relative;overflow:hidden;padding:15px 16px;border:1px solid rgba(92,145,255,.35);border-radius:22px;background:linear-gradient(120deg,rgba(23,39,81,.96),rgba(13,23,46,.94) 58%,rgba(20,27,61,.96));box-shadow:0 14px 35px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.06)}.top.hero:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-50px;top:-90px;background:rgba(57,231,255,.12);filter:blur(2px);pointer-events:none}.brand-mark{width:47px;height:47px;border-radius:15px;background:linear-gradient(145deg,rgba(56,189,248,.17),rgba(129,88,255,.19));border:1px solid rgba(104,180,255,.3);display:grid;place-items:center;box-shadow:inset 0 1px rgba(255,255,255,.1)}.brand-mark img{width:39px;height:39px;object-fit:contain}.top h1{font-size:clamp(21px,5.5vw,27px);font-weight:900;letter-spacing:.4px;background:linear-gradient(90deg,#fff,#9feeff 65%,#cbb8ff);-webkit-background-clip:text;background-clip:text;color:transparent}.brand-sub{color:#aebde0;font-size:10px;letter-spacing:1.5px;font-weight:800}.hero-chip{border:1px solid rgba(62,230,168,.27);background:rgba(62,230,168,.08);color:#7cf4c3;border-radius:999px;padding:8px 11px;box-shadow:0 0 22px rgba(62,230,168,.05)}
+.tabs{position:sticky;top:8px;z-index:20;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin:12px 0;padding:5px;border:1px solid rgba(143,164,255,.19);border-radius:16px;background:rgba(10,15,31,.92);box-shadow:0 8px 24px rgba(0,0,0,.24);backdrop-filter:blur(18px)}.tab-btn{border:1px solid transparent!important;border-radius:11px!important;min-height:43px;padding:9px 5px!important;background:transparent!important;color:#9eaccd!important;font-size:11px!important;letter-spacing:.6px;font-weight:900}.tab-btn.active{background:linear-gradient(110deg,#277cf6,#7654ff)!important;color:white!important;border-color:rgba(255,255,255,.15)!important;box-shadow:0 5px 15px rgba(75,102,255,.3)}
+.panel{border:1px solid var(--line);border-radius:19px;background:linear-gradient(145deg,rgba(19,28,52,.97),rgba(12,18,35,.97));padding:13px;box-shadow:0 10px 26px rgba(0,0,0,.19),inset 0 1px rgba(255,255,255,.035);backdrop-filter:blur(10px)}.section-card{position:relative;overflow:hidden}.section-heading{gap:10px;margin-bottom:13px}.section-heading strong{font-size:14px;letter-spacing:.1px;color:#f5f7ff}.section-heading small{font-size:11px;color:var(--muted);line-height:1.45}.section-icon{width:38px;height:38px;min-width:38px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,rgba(57,231,255,.16),rgba(111,87,255,.2));border:1px solid rgba(115,166,255,.22);font-size:18px}.count-pill{border-radius:999px;background:rgba(57,231,255,.1);border:1px solid rgba(57,231,255,.2);color:#75f0ff;padding:5px 9px;font-size:10px;font-weight:900}
+.field label,.listtitle span{color:#b5c2e1;font-size:11px;font-weight:800;letter-spacing:.35px}input,select{background:#080e20!important;color:#f7f8ff!important;border:1px solid #2b385a!important;border-radius:12px!important;min-height:45px;padding:10px 12px!important;box-shadow:inset 0 1px rgba(255,255,255,.025);font-size:14px}input::placeholder{color:#657392}input:focus,select:focus{border-color:#54dfff!important;box-shadow:0 0 0 3px rgba(57,231,255,.12),0 0 20px rgba(57,231,255,.05)!important;outline:none}button{border-radius:12px!important;min-height:44px;border:1px solid rgba(147,174,255,.18)!important;background:linear-gradient(135deg,#1b2a4b,#172039)!important;color:#f6f7ff!important;font-size:11px;font-weight:900;letter-spacing:.3px;box-shadow:0 4px 12px rgba(0,0,0,.13);transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}button:active{transform:scale(.98)}button.primary{background:linear-gradient(110deg,#16b9e8,#367dff 54%,#8154f7)!important;border-color:rgba(130,207,255,.3)!important;box-shadow:0 7px 17px rgba(52,115,255,.2)}button.danger{background:linear-gradient(110deg,#fb5479,#bb326d)!important;border-color:rgba(255,141,174,.25)!important}.green{background:linear-gradient(110deg,#0baf8b,#20c98b)!important}.actions{gap:9px}.actions button{min-height:47px}.roomrow{gap:6px}.roomrow button{padding:8px 5px;font-size:10px}.lists-grid{gap:9px}#userList,#targetList{height:clamp(150px,27vh,230px);background:#080e20;border:1px solid #2a3655;border-radius:13px;padding:5px}#userList .user-item,#targetList .target-item{padding:10px 8px;border-bottom-color:rgba(126,149,200,.13);font-size:12px}#userList .user-check{accent-color:#4f8cff;width:20px;height:20px}#targetList .target-item{background:rgba(130,92,255,.045)}.trash-btn{min-height:32px!important;height:32px!important;background:rgba(255,85,119,.12)!important;color:#ff8da5!important;border-color:rgba(255,85,119,.2)!important}table{border-radius:12px;background:rgba(7,12,26,.7)}th{color:#a8b8dd;background:rgba(79,140,255,.09);font-size:10px;letter-spacing:.35px}th,td{border-bottom:1px solid rgba(126,149,200,.14);padding:9px 7px}td{font-size:11px}.status-balloon.online{background:var(--green)}.wallet-caption{color:var(--cyan)}.flat-progress{background:#080e20;border-radius:99px;overflow:hidden}.flat-progress-fill{background:linear-gradient(90deg,#26d8f3,#4f8cff,#a16bff)!important}.flat-summary{gap:7px}.flat-summary span{background:rgba(79,140,255,.08);border:1px solid rgba(143,164,255,.15);padding:7px 8px;border-radius:10px}.tab-panel{animation:fadeUp .22s ease both}
+@media(max-width:600px){.wrap{padding:9px;padding-top:max(9px,env(safe-area-inset-top))}.top.hero{padding:12px;border-radius:18px}.brand-mark{width:42px;height:42px}.brand-mark img{width:35px;height:35px}.hero-chip{font-size:9px;padding:7px 9px}.panel{padding:11px;border-radius:16px;margin-bottom:9px}.section-heading{margin-bottom:11px}.setting-row{gap:8px!important}.field label{font-size:10px;margin-bottom:5px}.troop-row{grid-template-columns:minmax(0,1fr) 58px 58px!important}.troop-row .field:last-child{grid-column:1/-1}.troop-row .field:last-child button{width:100%}.save-row{grid-template-columns:minmax(0,1fr) 70px 70px!important}.pass-row{grid-template-columns:minmax(0,1fr) 92px!important}.lists-grid{grid-template-columns:1fr 1fr;gap:7px}.listtitle{margin-bottom:7px}.listtitle span{font-size:10px}.roomrow{grid-template-columns:minmax(0,1fr) 62px 62px!important}.roomrow>*:last-child{grid-column:1/-1}.roomrow input{min-width:0}.roomrow button{font-size:10px}.kick-mode-layout{grid-template-columns:minmax(0,1fr) 88px!important}.duel-settings-row,.settings-row{grid-template-columns:1fr 1fr!important}.kickall-side{font-size:10px}.kick-socket-name{font-size:10px}.kick-socket-detail{font-size:9px}table{min-width:540px}.troop-table-card{overflow:hidden}.troop-table-card table{min-width:0;table-layout:fixed}.troop-table-card th,.troop-table-card td{padding:8px 4px;font-size:10px;overflow-wrap:anywhere}.troop-table-card th:nth-child(1){width:24px}.troop-table-card th:nth-child(2){width:27%}.troop-table-card th:nth-child(3){width:43%}.troop-table-card th:nth-child(4){width:22%}.password-wrap{gap:3px}.password-wrap input{padding:7px 5px!important;font-size:11px;min-width:0}.wallet-caption{font-size:11px;min-width:22px}.status-balloon{width:9px;height:9px}.actions.login-actions button{font-size:10px;padding:8px 5px}.tab-btn{min-height:42px}.flat-report{overflow-x:auto}}
+@media(max-width:370px){.wrap{padding:7px}.top.hero{padding:10px}.brand-sub{font-size:8px;letter-spacing:1px}.hero-chip{padding:6px;font-size:8px}.save-row{grid-template-columns:minmax(0,1fr) 56px 56px!important}.pass-row{grid-template-columns:minmax(0,1fr) 76px!important}.troop-row{grid-template-columns:minmax(0,1fr) 48px 48px!important}.roomrow{grid-template-columns:minmax(0,1fr) 54px 54px!important}.section-icon{width:34px;height:34px;min-width:34px}.section-heading strong{font-size:12px}input,select{padding:9px 8px!important;font-size:12px}button{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+
+/* Mobile-first premium refresh: visual-only overrides */
+:root{color-scheme:dark;--bg:#070b18;--panel:rgba(15,23,48,.92);--line:rgba(118,145,255,.22);--text:#f5f7ff;--muted:#9eafd2;--cyan:#28e0e8;--blue:#4f7cff;--violet:#a855f7;--pink:#f472b6;--green:#34d399;--shadow:0 16px 42px rgba(0,0,0,.28)}
+html{background:var(--bg)!important}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif!important;background:radial-gradient(ellipse at 12% -8%,rgba(65,89,220,.28),transparent 42%),radial-gradient(ellipse at 100% 20%,rgba(168,85,247,.12),transparent 35%),var(--bg)!important;color:var(--text)!important;letter-spacing:.01em}.wrap{max-width:1060px!important;padding:12px!important}.hero{padding:12px 4px 18px!important}.brand-mark{width:64px!important;height:58px!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(79,124,255,.18),rgba(40,224,232,.08))!important;border:1px solid rgba(104,151,255,.25)!important;box-shadow:0 8px 28px rgba(59,130,246,.17)!important}.brand-mark img{width:100%!important;height:100%!important;object-fit:contain!important;padding:4px!important}.top h1{font-size:clamp(21px,5vw,27px)!important;letter-spacing:1px!important}.brand-sub{font-size:10px!important;letter-spacing:1.2px!important;color:#8daeff!important}.hero-chip{padding:9px 12px!important;border-radius:14px!important;background:linear-gradient(135deg,rgba(16,185,129,.13),rgba(40,224,232,.08))!important;border-color:rgba(52,211,153,.25)!important;font-size:10px!important}.tabs{position:sticky;top:6px;z-index:20;display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;padding:7px!important;margin:0 0 14px!important;border:1px solid var(--line)!important;border-radius:18px!important;background:rgba(8,13,30,.88)!important;backdrop-filter:blur(18px);box-shadow:var(--shadow)}.tab-btn{min-height:44px!important;border-radius:13px!important;border:1px solid transparent!important;background:rgba(255,255,255,.035)!important;color:#aab9da!important;font-size:11px!important;font-weight:850!important;letter-spacing:.6px!important}.tab-btn::before{display:inline-block;margin-right:6px;font-size:14px}.tab-btn#tabSetting::before{content:"⚙"}.tab-btn#tabDuel::before{content:"⚡"}.tab-btn#tabFlat::before{content:"💰"}.tab-btn.active{background:linear-gradient(120deg,#386cff,#8057ff)!important;color:#fff!important;border-color:rgba(255,255,255,.18)!important;box-shadow:0 6px 20px rgba(87,99,255,.3)!important}.panel,.card,.section,.box-panel,.list-panel{border-radius:20px!important;border:1px solid var(--line)!important;background:linear-gradient(145deg,rgba(19,28,57,.95),rgba(10,16,35,.96))!important;box-shadow:var(--shadow)!important}.panel{padding:15px!important}.panel-title,h2,h3,.section-title{letter-spacing:.1px!important}.field label,label{color:#a9bce2!important;font-weight:750!important;font-size:11px!important;letter-spacing:.35px!important}.field input,input,select,textarea{min-height:46px!important;border-radius:13px!important;border:1px solid rgba(124,153,218,.25)!important;background:rgba(5,10,25,.78)!important;color:#f6f8ff!important;padding:11px 13px!important;font-size:14px!important;box-shadow:inset 0 1px rgba(255,255,255,.025)!important}input:focus,select:focus,textarea:focus{outline:none!important;border-color:#45dce9!important;box-shadow:0 0 0 3px rgba(40,224,232,.12)!important}button,.btn{min-height:44px!important;border-radius:13px!important;font-family:inherit!important;font-weight:850!important;letter-spacing:.25px!important;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease!important}button:active{transform:scale(.98)}button.primary,.primary{background:linear-gradient(120deg,#2879ff,#7355ff)!important;color:white!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:0 7px 20px rgba(79,124,255,.22)!important}button.green,.green{background:linear-gradient(120deg,#079e91,#12c99a)!important;color:#041a1b!important;border:0!important}button.danger,.danger{background:linear-gradient(120deg,#f04470,#ff784e)!important;color:white!important;border:0!important}button:not(.primary):not(.green):not(.danger):not(.tab-btn){background:linear-gradient(145deg,rgba(40,55,91,.9),rgba(22,31,57,.95))!important;border:1px solid rgba(129,157,220,.22)!important;color:#eaf0ff!important}.listbox,.list-box,.user-list,.target-list{border-radius:15px!important;border:1px solid rgba(124,153,218,.2)!important;background:rgba(4,9,23,.62)!important;overflow:hidden}.listbox button,.list-box button{border-radius:10px!important}.status,.badge,.pill{border-radius:999px!important}.status{font-weight:800!important}.bottom-nav{position:sticky;bottom:6px;z-index:18;margin-top:12px;padding:7px;border:1px solid var(--line);border-radius:18px;background:rgba(8,13,30,.92);backdrop-filter:blur(18px)}
+@media(max-width:640px){.wrap{padding:10px!important}.hero{gap:8px!important}.brand-wrap{gap:9px!important}.brand-mark{width:54px!important;height:50px!important}.top h1{font-size:20px!important}.brand-sub{font-size:9px!important}.hero-chip{padding:8px 9px!important}.panel{padding:12px!important;margin-bottom:11px!important}.panel-title{font-size:15px!important}.field input,input,select,textarea{min-height:48px!important}.tabs{top:4px}.tab-btn{font-size:10px!important;min-height:43px!important;padding:8px 4px!important}.tabs .tab-btn::before{margin-right:4px}.grid,.fields,.form-grid{grid-template-columns:minmax(0,1fr)!important}.panel button{max-width:100%}.wrap table{font-size:12px}}
+@media(max-width:370px){.hero-chip{font-size:9px!important}.brand-mark{width:46px!important;height:44px!important}.top h1{font-size:18px!important}.tab-btn::before{display:block!important;margin:0 0 2px!important}.tab-btn{min-height:50px!important}.wrap{padding:7px!important}}
+@media(prefers-reduced-motion:reduce){button{transition:none!important}}
+
+
+/* Refined compact troop table and elegant room lists */
+.troop-table-card table{width:100%;table-layout:fixed;min-width:0!important;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:15px}
+.troop-table-card th:nth-child(1),.troop-table-card td:nth-child(1){width:42%}
+.troop-table-card th:nth-child(2),.troop-table-card td:nth-child(2){width:43%}
+.troop-table-card th:nth-child(3),.troop-table-card td:nth-child(3){width:15%;text-align:center}
+.troop-table-card th{font-size:9px;letter-spacing:.2px;padding:8px 6px;white-space:normal}
+.troop-table-card td{padding:6px 5px;min-width:0}
+.troop-table-card td input{width:100%;min-width:0!important;min-height:35px!important;height:35px;padding:6px 8px!important;font-size:12px!important;border-radius:9px!important}
+.troop-table-card .password-wrap{gap:3px;min-width:0}
+.troop-table-card .password-wrap input{flex:1 1 auto;width:0;min-width:0!important;padding:5px 6px!important;font-size:10px!important;letter-spacing:0}
+.troop-table-card .wallet-caption{min-width:20px;font-size:10px;padding:0 1px}
+.troop-table-card .status-balloon{width:10px;height:10px}
+#userList,#targetList{height:clamp(160px,29vh,260px);padding:6px!important;border-radius:16px!important;border:1px solid rgba(115,145,210,.28)!important;background:linear-gradient(160deg,rgba(12,21,45,.96),rgba(5,10,25,.96))!important;box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 22px rgba(0,0,0,.12);overscroll-behavior:contain}
+#userList .user-item,#targetList .target-item{margin:3px 0;padding:9px 10px!important;min-height:38px;border:1px solid rgba(117,145,205,.12)!important;border-radius:11px;background:rgba(255,255,255,.025);font-size:12px;line-height:1.25;transition:background .15s,border-color .15s,transform .15s}
+#userList .user-item:hover,#targetList .target-item:hover{background:rgba(71,119,255,.11);border-color:rgba(90,151,255,.28)!important;transform:translateY(-1px)}
+#userList .user-check{flex:0 0 auto;width:18px!important;height:18px!important;accent-color:#6c8cff}
+#targetList .target-item{border-left:3px solid #9a7bff!important;background:linear-gradient(90deg,rgba(143,105,255,.09),rgba(255,255,255,.02))}
+.listtitle{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+#userCount,#targetCount{display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:24px;padding:0 7px;border-radius:999px;background:rgba(76,132,255,.15);border:1px solid rgba(110,155,255,.22);color:#cfe0ff;font-size:11px;font-weight:850}
+@media(max-width:600px){.troop-table-card{padding:9px!important}.troop-table-card th:nth-child(1),.troop-table-card td:nth-child(1){width:44%}.troop-table-card th:nth-child(2),.troop-table-card td:nth-child(2){width:41%}.troop-table-card th:nth-child(3),.troop-table-card td:nth-child(3){width:15%}.troop-table-card th,.troop-table-card td{padding:6px 3px!important}.troop-table-card td input{font-size:11px!important;padding:5px 5px!important}.troop-table-card .password-wrap input{font-size:9px!important;padding:4px 3px!important}.troop-table-card .wallet-caption{font-size:9px;min-width:16px}.troop-table-card .section-heading{gap:8px}#userList,#targetList{height:clamp(170px,30vh,260px);padding:4px!important}#userList .user-item,#targetList .target-item{padding:8px 6px!important;font-size:11px;gap:6px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top hero">
+    <div class="brand-wrap">
+      <div class="brand-mark"><img src="/static/logo.webp?v=3" alt="MIGSOCK TEAM logo" onerror="this.style.display='none';this.parentElement.classList.add('logo-failed')"></div>
+      <div>
+        <h1>MIGSOCK</h1>
+        <div class="brand-sub">MIGSOCK DUEL V2</div>
+      </div>
+    </div>
+    <div class="hero-chip"><span class="hero-dot"></span><span>READY</span></div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Navigasi">
+    <button id="tabSetting" class="tab-btn active" role="tab" aria-selected="true">SETTING</button>
+    <button id="tabDuel" class="tab-btn" role="tab" aria-selected="false">DUEL</button>
+    <button id="tabFlat" class="tab-btn" role="tab" aria-selected="false">FLAT</button>
+  </div>
+
+  <section id="panelSetting" class="tab-panel active" role="tabpanel">
+  <div class="panel section-card login-troop-card">
+    <div class="section-heading"><div class="section-icon">👥</div><div><strong>Login Troop</strong><small>Atur username dan password troop</small></div></div>
+    <div class="setting-row troop-row">
+      <div class="field"><label for="nametroop">NameTroop</label><input id="nametroop" placeholder="contoh: tai" autocomplete="off"></div>
+      <div class="field"><label for="start">Awal</label><input id="start" type="text" inputmode="numeric" pattern="\d*" value="00" maxlength="3"></div>
+      <div class="field"><label for="end">Akhir</label><input id="end" type="text" inputmode="numeric" pattern="\d*" value="99" maxlength="3"></div>
+      <div class="field"><label>&nbsp;</label><button id="generateTroop" class="primary">GENERATE</button></div>
+    </div>
+    <div class="setting-row pass-row">
+      <div class="field"><label for="passwordAll">PasswordAll</label><input id="passwordAll" type="password" placeholder="Password semua ID" autocomplete="new-password"></div>
+      <div class="field"><label>&nbsp;</label><button id="setPass">SET PASS</button></div>
+    </div>
+  </div>
+
+  <div class="panel section-card save-card">
+    <div class="section-heading"><div class="section-icon">☁️</div><div><strong>Save / Load</strong><small>Simpan atau muat konfigurasi troop</small></div></div>
+    <div class="setting-row save-row">
+      <div class="field"><label for="saveLoad">SaveLoad</label><input id="saveLoad" value="multi1" placeholder="Nama simpanan, contoh: multi1" autocomplete="off"><input id="loadFile" type="file" accept=".json,application/json" style="display:none"></div>
+      <div class="field"><label>&nbsp;</label><button id="saveConfig" class="primary">SAVE</button></div>
+      <div class="field"><label>&nbsp;</label><button id="loadConfig">LOAD</button></div>
+    </div>
+  </div>
+
+  <div class="panel section-card troop-table-card">
+    <div class="section-heading troop-heading"><div class="section-icon">👥</div><div><strong>Daftar Troop (10)</strong><small>Username &amp; password troop</small></div><span class="count-pill">10 / 10</span></div>
+    <table>
+      <thead><tr><th>Username</th><th>Password / Saldo</th><th>Status</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <div class="actions login-actions">
+      <button class="primary" id="loginAll">LOGIN ALL</button>
+      <button class="danger" id="logoutAll">LOGOUT ALL</button>
+    </div>
+  </div>
+
+  </section>
+
+  <section id="panelFlat" class="tab-panel" role="tabpanel">
+  <div class="panel section-card">
+    <div class="section-heading"><div class="section-icon">💰</div><div><strong>FLAT</strong><small>Samakan saldo WS1–WS10 dari akun bank</small></div></div>
+    <div class="setting-row" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px">
+      <div class="field"><label for="usernamebank">UsernameBank</label><input id="usernamebank" placeholder="Username bank" autocomplete="off"></div>
+      <div class="field"><label for="passwordbank">PasswordBank</label><input id="passwordbank" type="password" placeholder="Password bank" autocomplete="new-password"></div>
+      <div class="field"><label for="pinbank">PIN</label><input id="pinbank" type="password" inputmode="numeric" placeholder="PIN transfer" autocomplete="off"></div>
+      <div class="field"><label for="flatAmount">Jumlah Flat</label><input id="flatAmount" type="text" inputmode="decimal" placeholder="Contoh: 1000"></div>
+    </div>
+    <div class="setting-row" style="grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:end;margin-top:8px">
+      <div class="field"><label>Saldo Bank</label><span id="bankBalance" class="wallet-caption" style="justify-content:flex-start;min-height:44px;font-size:17px">—</span></div>
+      <div class="field"><label>&nbsp;</label><button id="loginBank" class="primary">LOGIN BANK</button></div>
+      <div class="field"><label>&nbsp;</label><button id="logoutBank" class="danger">LOGOUT BANK</button></div>
+    </div>
+    <div class="setting-row" style="grid-template-columns:1fr;gap:8px;margin-top:8px">
+      <div class="field"><label>&nbsp;</label><button id="flatButton" class="primary" style="min-height:48px">FLAT</button></div>
+    </div>
+    <div id="flatStatus" class="status" style="margin-top:9px;color:#94a3b8">Bank belum login.</div>
+    <div class="flat-progress"><div id="flatProgressFill" class="flat-progress-fill"></div></div>
+    <div id="flatSummary" class="flat-summary"><span>Progress <b>0/10</b></span><span>Total kirim <b>0</b></span><span>Berhasil <b>0</b></span><span>Gagal <b>0</b></span></div>
+    <div class="flat-report">
+      <table>
+        <thead><tr><th>WS</th><th>Username</th><th>Saldo Awal</th><th>Target</th><th>Selisih</th><th>Terkirim</th><th>Status</th><th>Saldo Bank</th></tr></thead>
+        <tbody id="flatReportBody"></tbody>
+      </table>
+    </div>
+  </div>
+  </section>
+
+  <section id="panelDuel" class="tab-panel" role="tabpanel">
+  <div class="panel section-card room-users-card">
+    <div class="section-heading"><div class="section-icon">👥</div><div><strong>Room &amp; User List</strong><small>Masukkan room lalu ambil daftar user</small></div></div>
+    <div class="lists-grid">
+      <div>
+        <div class="listtitle"><span>USER</span><span id="userCount">0</span></div>
+        <div id="userList" class="user-box" aria-label="List username"></div>
+      </div>
+      <div>
+        <div class="listtitle"><span>TARGET</span><span style="display:flex;align-items:center;gap:6px"><span id="targetCount">0</span><button id="clearTarget" class="danger trash-btn" title="Hapus semua username TARGET" aria-label="Hapus semua username TARGET">🗑️</button></span></div>
+        <div id="targetList" aria-label="List target room"></div>
+      </div>
+    </div>
+    <div class="roomrow room-controls-bottom">
+      <div class="field"><label for="room">Room</label><input id="room" placeholder="MIG33" autocomplete="off"></div>
+      <div class="field"><label>&nbsp;</label><button id="enterAll">ENTER ALL</button></div>
+      <div class="field"><label>&nbsp;</label><button id="leaveAll">LEAVE ALL</button></div>
+      <div class="field"><label>&nbsp;</label><button id="listRoom" class="green">LIST USER</button></div>
+    </div>
+    <div class="section-heading compact-heading"><div class="section-icon">⏱️</div><div><strong>Status &amp; Timer</strong><small>Timer berjalan berdasarkan event room</small></div></div>
+    <div class="room-timer-row">
+      <div class="field"><label for="timerKickall">Timer KickAll</label><input id="timerKickall" type="number" min="0" value="900"></div>
+      <div class="field countdown-field"><label for="countdown">COUNTDOWN</label><input id="countdown" type="number" min="0" value="60000" readonly></div>
+      <div class="field reset-field"><label>&nbsp;</label><button id="resetCountdown" class="reset-timer" title="Reset Countdown ke 60000" aria-label="Reset Countdown ke 60000">↻</button></div>
+    </div>
+    <div class="duel-settings-row">
+      <div class="field"><label for="bruteMode">Optionbox Brute</label><select id="bruteMode"><option value="1">Brute 1</option><option value="2">Brute 2</option><option value="3">Brute 3</option><option value="4">Brute 4</option><option value="5">Brute 5</option><option value="6">Brute 6</option><option value="7">Brute 7</option><option value="8">Brute 8</option><option value="9">Brute 9</option><option value="10">Brute 10</option></select></div>
+      <div class="field"><label for="kickLimitPerWs">Kick Limit/s/WS</label><input id="kickLimitPerWs" type="number" min="1" max="200" value="100"></div>
+      <div class="field"><label for="delaySocket">Delay Socket (ms)</label><input id="delaySocket" type="number" min="0" value="10"></div>
+      <div class="field"><label for="delayTarget">Delay Target (ms)</label><input id="delayTarget" type="number" min="0" value="10"></div>
+      <div class="field" id="loopKickField"><label for="loopKick">Loop</label><input id="loopKick" type="number" min="1" value="45"></div>
+    </div>
+    <div class="kick-mode-layout">
+      <div class="kick-mode-stack">
+        <div class="field"><label for="saveLoadSet">SaveLoad</label><input id="saveLoadSet" value="kickset1" placeholder="Nama file set" autocomplete="off"></div>
+        <input id="loadSetFile" type="file" accept=".json,application/json" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><button id="saveSet" class="primary">SAVE SET</button><button id="loadSet">LOAD SET</button></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px"><button id="kickAll" class="danger kickall-side">KICK ALL</button></div>
+    </div>
+  </div>
+
+
+  </section>
+</div>
+
+<script>
+
+const tabSetting=document.getElementById("tabSetting"),tabDuel=document.getElementById("tabDuel"),tabFlat=document.getElementById("tabFlat"),panelSetting=document.getElementById("panelSetting"),panelDuel=document.getElementById("panelDuel"),panelFlat=document.getElementById("panelFlat");
+function switchTab(name){
+  const setting=name==="setting", duel=name==="duel", flat=name==="flat";
+  panelSetting.classList.toggle("active",setting); panelDuel.classList.toggle("active",duel); panelFlat.classList.toggle("active",flat);
+  tabSetting.classList.toggle("active",setting); tabDuel.classList.toggle("active",duel); tabFlat.classList.toggle("active",flat);
+  tabSetting.setAttribute("aria-selected",String(setting)); tabDuel.setAttribute("aria-selected",String(duel)); tabFlat.setAttribute("aria-selected",String(flat));
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+tabSetting.onclick=()=>switchTab("setting");
+tabDuel.onclick=()=>switchTab("duel");
+tabFlat.onclick=()=>switchTab("flat");
+const N=10;
+const clients=Array.from({length:N},()=>({ws:null,loggedIn:false,inRoom:false,pingTimer:null,intentionalClose:false,balance:null,generation:0}));
+const rows=document.getElementById("rows"),roomEl=document.getElementById("room"),userList=document.getElementById("userList"),targetList=document.getElementById("targetList"),userCount=document.getElementById("userCount"),targetCount=document.getElementById("targetCount"),saveLoadEl=document.getElementById("saveLoad");
+let confirmedKickedTargets=new Set();let kickRunning=false;
+const SAVE_PREFIX="migsock_config_";
+let participantUsers=[];
+let participantBySocket=Array.from({length:N},()=>[]);
+// Central frontend state: socket events update state first, then the UI is
+// rendered only for the affected/settled portion. This keeps realtime event
+// handling cheap on mobile devices.
+const appState={
+  participants:new Map(),
+  targets:new Map(),
+  kicked:new Set(),
+  participantRenderTimer:null,
+  eventSeq:0,
+  lastEventAt:0
+};
+function stateKey(value){return String(value||"").trim().toLowerCase()}
+function queueParticipantRender(){
+  if(appState.participantRenderTimer)return;
+  const flush=()=>{
+    appState.participantRenderTimer=null;
+    const merged=[...appState.participants.values()];
+    participantUsers=merged;
+    showUsers(merged,false);
+  };
+  if(typeof requestAnimationFrame==="function")appState.participantRenderTimer=requestAnimationFrame(flush);
+  else appState.participantRenderTimer=setTimeout(flush,32);
+}
+function rebuildParticipantState(){
+  appState.participants.clear();
+  for(const list of participantBySocket||[])for(const u of (Array.isArray(list)?list:[])){
+    const value=String(u||"").trim(),key=stateKey(value);
+    if(value&&key&&!confirmedKickedTargets.has(key))appState.participants.set(key,value);
+  }
+}
+function applyParticipantSnapshot(i,users){
+  participantBySocket[i]=Array.isArray(users)?users:[];
+  participantReceived.add(i);
+  rebuildParticipantState();
+  const merged=[...appState.participants.values()];
+  queueParticipantRender();
+  scheduleAutoTarget(merged,autoTargetCycle);
+  return merged;
+}
+function dispatchSocketEvent(m,i){
+  if(!m||typeof m!=="object")return;
+  appState.eventSeq++;
+  appState.lastEventAt=performance.now();
+  updateBalanceFromMessage(i,m);
+  if(m.type==="kick.target.confirmed"){removeConfirmedKickedTarget(m.target_username);return}
+  if(m.type==="kick.socket.started"){
+    // Backend is authoritative: this marks the socket group that is currently
+    // processing the complete Target list.
+    return;
+  }
+  if(m.type==="kick.socket.completed"){
+    return;
+  }
+  if(m.type==="kick.job.finished"){
+    kickRunning=false;
+    setKickButtonState(false);
+    return;
+  }
+  if(isConfirmedKickEvent(m)){removeConfirmedKickedTarget(kickEventData(m).target);return}
+  if(m.type==="proxy.error"){status(i,"PROXY ERROR","error");log(i,"PROXY ERROR: "+(m.data?.message||"unknown"));return}
+  if(isKickEvent(m)){startCountdownFromKick(m)}
+  if(handleParticipants(m,i))return;
+  if(m.type==="auth.required"){log(i,"RECV auth.required");send(i,{type:"developer.login",username:cred(i).username,password:cred(i).password},true)}
+  else if(m.type==="session.ready"){clients[i].loggedIn=true;clients[i].inRoom=false;status(i,"ONLINE","online");startPing(i);send(i,{type:"wallet.balance"},true);log(i,"LOGIN OK")}
+  else if(m.type==="room.join.result"){const ok=m.ok===true||m.data?.ok===true||m.data?.joined===true||m.success===true;if(ok){clients[i].inRoom=true;log(i,"ENTER ROOM OK");const r=roomEl.value.trim();if(r)send(i,{type:"room.participants",room:r},true)}else log(i,"ENTER ROOM RESULT "+JSON.stringify(m))}
+  else if(m.type==="room.leave.result"){const ok=m.ok===true||m.data?.ok===true||m.data?.left===true||m.success===true;if(ok){clients[i].inRoom=false;log(i,"LEAVE ROOM OK")}else log(i,"LEAVE ROOM RESULT "+JSON.stringify(m))}
+  else if(m.type==="session.replaced"){clients[i].loggedIn=false;clients[i].inRoom=false;stopPing(i);status(i,"REPLACED","error")}
+  else if(m.type==="error"){clients[i].loggedIn=false;clients[i].inRoom=false;stopPing(i);status(i,"ERROR","error");log(i,"API ERROR "+JSON.stringify(m))}
+}
+
+let autoTargetLocked=false;
+let autoTargetTimer=null;
+let autoTargetCycle=0;
+let participantExpected=new Set();
+let participantReceived=new Set();
+const COUNTDOWN_DEFAULT=60000;
+let countdownDeadline=0;
+let countdownTimer=null;
+let lastKickEventKey="";
+let countdownKickTriggered=false;
+function countdownEl(){return document.getElementById("countdown")}
+function setCountdownValue(v){countdownEl().value=String(Math.max(0,Math.round(v)))}
+function kickEventData(m){const d=m?.data&&typeof m.data==="object"?m.data:m||{};return {
+  type:String(m?.type??d?.type??d?.event_type??"").toLowerCase(),
+  action:String(m?.action??d?.action??"").toLowerCase(),
+  status:String(m?.status_message??d?.status_message??d?.message??"").toLowerCase(),
+  room:String(m?.room??d?.room??"").trim(),
+  target:String(m?.target_username??d?.target_username??d?.username??d?.target??"").trim(),
+  time:String(m?.time??d?.time??d?.timestamp??"").trim()
+}}
+function isConfirmedKickEvent(m){
+  const d=kickEventData(m);
+  if(!d.target)return false;
+  const exact=new Set([
+    "room.participant.kicked","room.member.kicked","room.user.kicked",
+    "participant.kicked","member.kicked","user.kicked"
+  ]);
+  if(exact.has(d.type))return true;
+  if(d.type.includes("vote")||d.type==="room.kick.result"||d.type==="room.command.result")return false;
+  return ["has been kicked","was kicked","have been kicked","kicked from the room"]
+    .some(x=>d.status.includes(x));
+}
+
+function isKickEvent(m){
+  const d=kickEventData(m);
+  if(!d.type)return false;
+  // Countdown hanya dipicu oleh event room.kick.state dengan pesan "A vote to kick".
+  // Event kick lain, room.kick.result, room.kicked, atau action vote_started tanpa
+  // pesan "A vote to kick" tidak boleh menyalakan countdown.
+  return d.type==="room.kick.state" && d.status.includes("a vote to kick");
+}
+function kickEventKey(m){const d=kickEventData(m);return [d.type,d.action,d.room,d.target,d.time,d.status].join("|")}
+function stopCountdown(reset=true){if(countdownTimer){clearInterval(countdownTimer);countdownTimer=null}countdownDeadline=0;if(reset)setCountdownValue(COUNTDOWN_DEFAULT)}
+function resetCountdownTimer(){stopCountdown(true);lastKickEventKey="";countdownKickTriggered=false;log(0,"Countdown di-reset ke 60000 dan berhenti")}
+function startCountdownFromKick(m){
+  const room=kickEventData(m).room;
+  const selected=roomEl.value.trim();
+  if(room && selected && room.toLowerCase()!==selected.toLowerCase())return;
+  const key=kickEventKey(m);
+  if(key===lastKickEventKey)return;
+  lastKickEventKey=key;
+  countdownKickTriggered=false;
+  if(countdownTimer)clearInterval(countdownTimer);
+  const duration=COUNTDOWN_DEFAULT;
+  const startedAt=performance.now();
+  countdownDeadline=startedAt+duration;
+  setCountdownValue(duration);
+  log(0,`EVENT KICK terdeteksi${room?` di room ${room}`:""}. Countdown mulai ${duration} ms`);
+  const tick=()=>{
+    const remaining=Math.max(0,countdownDeadline-performance.now());
+    setCountdownValue(remaining);
+    const timerKickall=Math.max(0,Number(document.getElementById("timerKickall")?.value)||0);
+    if(!countdownKickTriggered && remaining<=timerKickall){
+      countdownKickTriggered=true;
+      log(0,`Countdown ${remaining} ms <= Timer KickAll ${timerKickall} ms → KICKALL TERPICU`);
+      kickAll();
+    }
+    if(remaining<=0){
+      clearInterval(countdownTimer);
+      countdownTimer=null;
+      countdownDeadline=0;
+      setCountdownValue(COUNTDOWN_DEFAULT);
+      log(0,"Countdown selesai: 0 → reset 60000 dan berhenti");
+    }
+  };
+  countdownTimer=setInterval(tick,25);
+  tick();
+}
+
+function log(i,m){/* UI log removed */}
+function status(i,t,c){const e=document.getElementById(`status-${i}`);e.title=t;e.setAttribute("aria-label",t);e.className="status-balloon "+c}
+function formatNominal(value){
+  if(value===null||value===undefined||value==="")return "—";
+  const n=Number(value);
+  if(!Number.isFinite(n))return "—";
+  return String(n).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');
+}
+function setBalance(i,value){const e=document.getElementById(`balance-${i}`);if(!e)return;e.textContent=formatNominal(value)}
+function parseBalanceValue(v, unit='cr'){
+  if(v===null||v===undefined)return null;
+  if(typeof v==='number'&&Number.isFinite(v)) return unit==='milli' ? v/1000 : v;
+  if(typeof v!=='string')return null;
+  const s=v.trim(); if(!s)return null;
+  const m=s.match(/-?\d+(?:[.,]\d+)?/); if(!m)return null;
+  const n=Number(m[0].replace(',','.')); if(!Number.isFinite(n))return null;
+  return unit==='milli' ? n/1000 : n;
+}
+function extractBalance(m){
+  // API contract: balance_cr is already CR; balance_milli_cr is milli-CR.
+  // Never infer the unit from the presence/absence of "CR" in a label.
+  const seen=new Set();
+  const walk=(v,key='',depth=0)=>{
+    if(depth>10||v===null||v===undefined)return null;
+    const k=String(key||'').toLowerCase();
+    if(k==='balance_cr') return parseBalanceValue(v,'cr');
+    if(k==='balance_milli_cr') return parseBalanceValue(v,'milli');
+    if(k==='label') return parseBalanceValue(v,'cr');
+    if(typeof v!=='object')return null;
+    if(seen.has(v))return null; seen.add(v);
+    const entries=Array.isArray(v)?v.map((x,i)=>[String(i),x]):Object.entries(v);
+    // Prefer the API's canonical balance_cr, then milli fallback.
+    for(const wanted of ['balance_cr','balance_milli_cr']){
+      for(const [ek,ev] of entries){
+        if(String(ek).toLowerCase()===wanted){
+          const out=walk(ev,ek,depth+1); if(out!==null)return out;
+        }
+      }
+    }
+    // Then inspect nested wallet objects (session.ready / wallet.* responses).
+    for(const [ek,ev] of entries){
+      const lk=String(ek).toLowerCase();
+      if(lk==='wallet'||lk==='developer'||lk==='data'||lk==='result'||lk==='recipient_wallet'){
+        const out=walk(ev,ek,depth+1); if(out!==null)return out;
+      }
+    }
+    return null;
+  };
+  return walk(m);
+}
+let flatRefreshState=null;
+let flatPreRefreshState=null;
+function updateBalanceFromMessage(i,m){
+  const type=String(m?.type??'').toLowerCase();
+  if(type==='session.ready'||type==='wallet.balance.result'||type==='wallet.transfer.result'||type.includes('balance')||type.includes('credit')){
+    const b=extractBalance(m);
+    if(b!==null){
+      setBalance(i,b);
+      if(type==='wallet.balance.result' && flatRefreshState?.pendingWs?.has(i)){
+        flatRefreshState.pendingWs.delete(i);
+        maybeFinishFlatRefresh();
+      }
+      if(type==='wallet.balance.result' && flatPreRefreshState?.pendingWs?.has(i)){
+        flatPreRefreshState.pendingWs.delete(i);
+        if(flatPreRefreshState.pendingWs.size===0){
+          const resolve=flatPreRefreshState.resolve;
+          flatPreRefreshState=null;
+          if(resolve)resolve(true);
+        }
+      }
+    }
+  }
+}
+
+function render(){for(let i=0;i<N;i++){insertRow(i)}}
+function insertRow(i){rows.insertAdjacentHTML("beforeend",`<tr><td><input id="user-${i}" placeholder="Username ${i+1}" autocomplete="off"></td><td class="password-cell"><div class="password-wrap"><input id="pass-${i}" type="password" placeholder="Password ${i+1}" autocomplete="new-password"><span id="balance-${i}" class="wallet-caption" title="Saldo">—</span></div></td><td style="text-align:center"><span id="status-${i}" class="status-balloon offline" title="OFFLINE" aria-label="OFFLINE"></span></td></tr>`) }
+function cred(i){return{username:document.getElementById(`user-${i}`).value.trim(),password:document.getElementById(`pass-${i}`).value}}
+function getRoom(){const room=roomEl.value.trim();if(!room){return null}return room}
+function getRange(){
+  const av=String(document.getElementById("start").value||"").trim();
+  const bv=String(document.getElementById("end").value||"").trim();
+  if(!/^\d+$/.test(av)||!/^\d+$/.test(bv)){ return null; }
+  const a=Number(av), b=Number(bv);
+  if(!Number.isSafeInteger(a)||!Number.isSafeInteger(b)||a<0||b<a){ return null; }
+  const values=[];
+  for(let i=0;i<N;i++){
+    const v=(i===0)?a:(i===N-1)?b:Math.round(a+(b-a)*i/(N-1));
+    values.push(v);
+  }
+  return {mode:"any-range",values,startWidth:av.length,endWidth:bv.length};
+}
+function refreshUserList(){}
+function updateTargetCount(){targetCount.textContent=targetList.querySelectorAll(".target-item").length}
+function targetHas(username){
+  const key=String(username||"").trim().toLowerCase();
+  return !!key && [...targetList.querySelectorAll(".target-item")].some(o=>String(o.dataset.username||"").trim().toLowerCase()===key);
+}
+function removeConfirmedKickedTarget(username){
+  username=String(username||"").trim();
+  if(!username)return false;
+  const key=stateKey(username);
+  if(!key)return false;
+  confirmedKickedTargets.add(key);
+  appState.kicked.add(key);
+  appState.participants.delete(key);
+  appState.targets.delete(key);
+
+  // Update only affected DOM nodes; do not rebuild the complete USER list.
+  [...targetList.querySelectorAll(".target-item")].forEach(row=>{
+    if(stateKey(row.dataset.username||row.textContent)===key)row.remove();
+  });
+  [...userList.querySelectorAll(".user-item")].forEach(row=>{
+    const value=stateKey(row.dataset.username||row.querySelector("span")?.textContent||row.textContent);
+    if(value===key)row.remove();
+  });
+
+  if(Array.isArray(participantBySocket)){
+    for(let i=0;i<participantBySocket.length;i++){
+      const list=Array.isArray(participantBySocket[i])?participantBySocket[i]:[];
+      participantBySocket[i]=list.filter(u=>stateKey(u)!==key);
+    }
+  }
+  participantUsers=[...appState.participants.values()];
+  userCount.textContent=String(userList.querySelectorAll(".user-item").length);
+  if(!userList.querySelector(".user-item") && participantUsers.length===0){
+    userList.innerHTML="";
+    const e=document.createElement("div");e.className="empty";e.textContent="Tidak ada participant";userList.appendChild(e);
+  }
+  updateTargetCount();
+  log(0,`KICKED: ${username} dihapus dari USER dan TARGET; state tersinkron`);
+  return true;
+}
+
+function addTarget(username){
+  const value=String(username||"").trim();
+  if(!value)return false;
+  const key=value.toLowerCase();
+  const ownWs=new Set();
+  for(let i=0;i<N;i++){const u=cred(i).username;if(u)ownWs.add(u.trim().toLowerCase());}
+  if(ownWs.has(key)||confirmedKickedTargets.has(key)||targetHas(value)||targetList.querySelectorAll(".target-item").length>=10)return false;
+  const e=document.createElement("div");
+  e.className="target-item";
+  e.dataset.username=value;
+  e.textContent=value;
+  targetList.appendChild(e);
+  appState.targets.set(key,value);
+  updateTargetCount();
+  return true;
+}
+function moveUserToTarget(username,row,checkbox){
+  const added=addTarget(username);
+  if(added){
+    if(row&&row.parentNode)row.parentNode.removeChild(row);
+    userCount.textContent=userList.querySelectorAll(".user-item").length;
+  }else if(checkbox){
+    checkbox.checked=false;
+  }
+}
+function autoAddMatchingTargets(users){
+  const blockedWsUsers=new Set();
+  for(let i=0;i<N;i++){
+    const u=cred(i).username;
+    if(u)blockedWsUsers.add(u.trim().toLowerCase());
+  }
+
+  const list=[...new Map((users||[])
+    .map(x=>String(x||'').trim())
+    .filter(Boolean)
+    .map(u=>[u.toLowerCase(),u])).values()]
+    .filter(u=>!blockedWsUsers.has(u.toLowerCase())&&!confirmedKickedTargets.has(u.toLowerCase()));
+
+  /*
+   * Auto Target v2:
+   * - only compares usernames inside the same prefix/suffix family;
+   * - numeric and alphabetic sequences are handled separately;
+   * - a family containing 10 members is strongly preferred;
+   * - when a family has >10 members, choose the tightest 10-number window;
+   * - when exactly 10 similar members exist but they are not perfectly
+   *   consecutive, they are still accepted instead of being ignored;
+   * - plain base names are never mixed with numbered variants;
+   * - WS1..WS10 usernames and already-kicked users are always excluded.
+   */
+  const alphaGroups=new Map();
+  const add=(map,key,item)=>{
+    if(!map.has(key))map.set(key,[]);
+    map.get(key).push(item);
+  };
+
+  // Alphabetic-only families are collected here; numeric families are
+  // handled by the generic numeric-segment engine below.
+  for(const u of list){
+    if(/\d/.test(u))continue;
+    const m=u.match(/^(.*?)([A-Za-z])$/);
+    if(m){
+      add(alphaGroups,m[1].toLowerCase(),{
+        u,ch:m[2].toLowerCase(),code:m[2].toLowerCase().charCodeAt(0)
+      });
+    }
+  }
+
+  const candidates=[];
+
+  // Generic numeric families.
+  // Detect the changing numeric segment at ANY position, not only the final
+  // number. This supports 1/2/3+ digit sequences and mixed separators, e.g.
+  // user1..user10, user.001..user.010, user-001..user-010,
+  // team.01.room.001..team.01.room.010 and other multi-segment usernames.
+  const numericGroups=new Map();
+  for(const u of list){
+    const matches=[...u.matchAll(/\d+/g)];
+    if(!matches.length)continue;
+    for(let idx=0;idx<matches.length;idx++){
+      const m=matches[idx];
+      const prefix=u.slice(0,m.index);
+      const suffix=u.slice(m.index+m[0].length);
+      const key=`${prefix.toLowerCase()}|${suffix.toLowerCase()}|${idx}|${matches.length}`;
+      if(!numericGroups.has(key))numericGroups.set(key,[]);
+      numericGroups.get(key).push({
+        u,n:Number(m[0]),raw:m[0],width:m[0].length,
+        prefix,suffix,segment:idx,totalSegments:matches.length
+      });
+    }
+  }
+
+  for(const [key,rawItems] of numericGroups){
+    const byNumber=new Map();
+    for(const x of rawItems){
+      if(!Number.isSafeInteger(x.n))continue;
+      const old=byNumber.get(x.n);
+      // Prefer the representation that preserves the dominant width, then
+      // stable lexical order. Width itself is not required to be identical,
+      // so 001..010 is correctly detected as one family.
+      if(!old || x.width>old.width || (x.width===old.width&&x.u.localeCompare(old.u)<0))byNumber.set(x.n,x);
+    }
+    const items=[...byNumber.values()].sort((a,b)=>a.n-b.n||a.u.localeCompare(b.u));
+    if(items.length<2)continue;
+
+    let bestWindow=null,bestScore=null;
+    const consider=(window)=>{
+      if(window.length<2)return;
+      let run=1,maxRun=1;
+      for(let k=1;k<window.length;k++){
+        if(window[k].n===window[k-1].n+1)run++; else run=1;
+        if(run>maxRun)maxRun=run;
+      }
+      const span=window[window.length-1].n-window[0].n;
+      const widths=new Map();
+      for(const x of window)widths.set(x.width,(widths.get(x.width)||0)+1);
+      let dominantWidth=0;
+      for(const count of widths.values())if(count>dominantWidth)dominantWidth=count;
+      const score={count:window.length,contiguous:maxRun,span,start:window[0].n,dominantWidth};
+      if(!bestScore||score.count>bestScore.count||
+        (score.count===bestScore.count&&score.contiguous>bestScore.contiguous)||
+        (score.count===bestScore.count&&score.contiguous===bestScore.contiguous&&score.span<bestScore.span)||
+        (score.count===bestScore.count&&score.contiguous===bestScore.contiguous&&score.span===bestScore.span&&score.dominantWidth>bestScore.dominantWidth)||
+        (score.count===bestScore.count&&score.contiguous===bestScore.contiguous&&score.span===bestScore.span&&score.dominantWidth===bestScore.dominantWidth&&score.start<bestScore.start)){
+        bestWindow=window;bestScore=score;
+      }
+    };
+
+    if(items.length>=10){
+      for(let i=0;i<=items.length-10;i++)consider(items.slice(i,i+10));
+    }else{
+      // If the same prefix/suffix family has fewer than 10 eligible users,
+      // keep ALL members of that family instead of requiring perfect numeric
+      // continuity. This is important when some sequence numbers are missing
+      // because they are WS usernames, already kicked, or simply offline.
+      // Example: silent_killer2,4,6,7,8,9,10 must be treated as one family.
+      if(items.length>=2)consider(items);
+    }
+    if(!bestWindow||bestWindow.length<2)continue;
+
+    const selected=bestWindow.slice(0,10);
+    const full=selected.length===10;
+    candidates.push({
+      items:selected,
+      // A complete 10-member family dominates smaller/partial candidates.
+      // Contiguous runs and tight spans then decide between equally-sized
+      // families. Width consistency is a tie-breaker, not a requirement.
+      score:400000+(full?100000:0)+selected.length*1000+
+        bestScore.contiguous*150+bestScore.dominantWidth*10-
+        Math.min(bestScore.span,999999)-Math.min(bestScore.start,999999)/1000000,
+      type:'num',start:bestScore.start,key
+    });
+  }
+
+  // Extended alphabetic families: detect a single changing letter token at
+  // any position when it is separated from surrounding text, e.g.
+  // abcd.a.man, team-a-x, room_a_test and similar forms.
+  const alphaExtendedGroups=new Map();
+  for(const u of list){
+    const matches=[...u.matchAll(/(?:^|[^A-Za-z])([A-Za-z])(?=$|[^A-Za-z])/g)];
+    for(const m of matches){
+      const charIndex=m.index+(m[0].length-m[1].length);
+      const prefix=u.slice(0,charIndex);
+      const suffix=u.slice(charIndex+1);
+      const key=`${prefix.toLowerCase()}|${suffix.toLowerCase()}`;
+      if(!alphaExtendedGroups.has(key))alphaExtendedGroups.set(key,[]);
+      alphaExtendedGroups.get(key).push({u,ch:m[1].toLowerCase(),code:m[1].toLowerCase().charCodeAt(0)});
+    }
+  }
+  for(const [key,rawItems] of alphaExtendedGroups){
+    const byCode=new Map();
+    for(const x of rawItems)if(!byCode.has(x.code))byCode.set(x.code,x);
+    const items=[...byCode.values()].sort((a,b)=>a.code-b.code||a.u.localeCompare(b.u));
+    if(items.length<2)continue;
+    let bestWindow=null,bestScore=null;
+    const limit=items.length>=10?items.length-9:items.length;
+    for(let i=0;i<limit;i++){
+      const window=items.length>=10?items.slice(i,i+10):items.slice(i);
+      if(window.length<2)continue;
+      let run=1,maxRun=1;
+      for(let k=1;k<window.length;k++){
+        if(window[k].code===window[k-1].code+1)run++; else run=1;
+        if(run>maxRun)maxRun=run;
+      }
+      const span=window[window.length-1].code-window[0].code;
+      const score={count:window.length,contiguous:maxRun,span,start:window[0].code};
+      if(!bestScore||score.count>bestScore.count||
+        (score.count===bestScore.count&&score.contiguous>bestScore.contiguous)||
+        (score.count===bestScore.count&&score.contiguous===bestScore.contiguous&&score.span<bestScore.span)||
+        (score.count===bestScore.count&&score.contiguous===bestScore.contiguous&&score.span===bestScore.span&&score.start<bestScore.start)){
+        bestWindow=window;bestScore=score;
+      }
+    }
+    if(!bestWindow||bestWindow.length<2)continue;
+    candidates.push({
+      items:bestWindow.slice(0,10),
+      score:320000+(bestWindow.length===10?100000:0)+bestWindow.length*1000+
+        bestScore.contiguous*100-bestScore.span-bestScore.start/100000,
+      type:'alpha-extended',start:bestScore.start,key
+    });
+  }
+
+  // Alphabetic families such as abcd.a ... abcd.j.
+  for(const [key,rawItems] of alphaGroups){
+    const byCode=new Map();
+    for(const x of rawItems)if(!byCode.has(x.code))byCode.set(x.code,x);
+    const items=[...byCode.values()].sort((a,b)=>a.code-b.code||a.u.localeCompare(b.u));
+    if(items.length<2)continue;
+
+    let bestWindow=null,bestScore=null;
+    if(items.length>=10){
+      for(let i=0;i<=items.length-10;i++){
+        const window=items.slice(i,i+10);
+        let maxRun=1,run=1;
+        for(let k=1;k<window.length;k++){
+          if(window[k].code===window[k-1].code+1)run++;
+          else run=1;
+          if(run>maxRun)maxRun=run;
+        }
+        const span=window[9].code-window[0].code;
+        const score={contiguous:maxRun,span,start:window[0].code};
+        if(!bestScore||score.contiguous>bestScore.contiguous||
+          (score.contiguous===bestScore.contiguous&&score.span<bestScore.span)||
+          (score.contiguous===bestScore.contiguous&&score.span===bestScore.span&&score.start<bestScore.start)){
+          bestWindow=window;bestScore=score;
+        }
+      }
+    }else{
+      for(let i=0;i<items.length;i++){
+        let run=[items[i]];
+        for(let j=i+1;j<items.length;j++){
+          if(items[j].code===run[run.length-1].code+1)run.push(items[j]);
+          else break;
+        }
+        if(run.length>=2&&(!bestWindow||run.length>bestWindow.length||
+          (run.length===bestWindow.length&&run[0].code<bestWindow[0].code)))bestWindow=run;
+      }
+      if(bestWindow)bestScore={
+        contiguous:bestWindow.length,
+        span:bestWindow[bestWindow.length-1].code-bestWindow[0].code,
+        start:bestWindow[0].code
+      };
+    }
+
+    if(!bestWindow||bestWindow.length<2)continue;
+    candidates.push({
+      items:bestWindow.slice(0,10),
+      score:300000 +
+        (bestWindow.length===10?100000:0) +
+        bestWindow.length*1000 +
+        bestScore.contiguous*100 -
+        bestScore.span -
+        bestScore.start/100000,
+      type:'alpha',
+      start:bestScore.start,
+      key
+    });
+  }
+
+  candidates.sort((a,b)=>b.score-a.score);
+  const best=candidates[0];
+  if(!best)return [];
+
+  const capacity=Math.max(0,10-targetList.querySelectorAll('.target-item').length);
+  if(!capacity)return [];
+
+  const added=[];
+  for(const x of best.items.slice(0,capacity)){
+    if(addTarget(x.u))added.push(x.u);
+  }
+  return added;
+}
+function clearTargets(){
+  if(autoTargetTimer){clearTimeout(autoTargetTimer);autoTargetTimer=null}
+  autoTargetCycle++;
+  const restored=[...new Set(participantUsers)].filter(u=>!confirmedKickedTargets.has(String(u).toLowerCase()));
+  targetList.innerHTML="";
+  appState.targets.clear();
+  autoTargetLocked=false;
+  updateTargetCount();
+  if(restored.length) showUsers(restored,false); else { userList.innerHTML=""; userCount.textContent="0"; }
+  log(0,`TARGET dihapus: ${restored.length} username dikembalikan ke USER`);
+}
+function generateTroop(){
+  const prefix=document.getElementById("nametroop").value.trim();
+  if(!prefix){return}
+  const range=getRange();
+  if(!range)return;
+  for(let i=0;i<N;i++){
+    document.getElementById(`user-${i}`).value="";
+    document.getElementById(`pass-${i}`).value="";
+  }
+
+  if(range.mode==="any-range"){
+    range.values.forEach((n,slot)=>{
+      const width=Math.max(range.startWidth,1);
+      const suffix=String(n).padStart(width,"0");
+      const u=prefix+suffix;
+      document.getElementById(`user-${slot}`).value=u;
+      log(slot,`Username ${u}`);
+    });
+  }
+  refreshUserList();
+}
+function setPass(){
+  const pw=document.getElementById("passwordAll").value;
+  if(!pw){return}
+  for(let i=0;i<N;i++)document.getElementById(`pass-${i}`).value=pw;
+  log(0,`Password diisi untuk ${N} ID`);
+}
+function send(i,o,hideLog=false){const c=clients[i];if(!c.ws||c.ws.readyState!==WebSocket.OPEN){log(i,"Socket belum OPEN");return false}c.ws.send(JSON.stringify(o));if(hideLog)log(i,`SEND ${o.type}`);else log(i,"SEND "+JSON.stringify(o));return true}
+function stopPing(i){if(clients[i].pingTimer){clearInterval(clients[i].pingTimer);clients[i].pingTimer=null}}
+function startPing(i){stopPing(i);clients[i].pingTimer=setInterval(()=>{if(clients[i].loggedIn)send(i,{type:"ping"},true)},40000)}
+function logoutOne(i){
+  const c=clients[i];
+  c.generation++;
+  c.intentionalClose=true;
+  stopPing(i);
+  c.loggedIn=false;c.inRoom=false;c.balance=null;
+  setBalance(i,"—");
+  const old=c.ws;c.ws=null;
+  if(old){try{old.close(1000,"logout")}catch(e){}}
+  status(i,"OFFLINE","offline");
+  log(i,"Logout + session WS dibersihkan");
+}
+function clearTroopClientState(){
+  if(autoTargetTimer){clearTimeout(autoTargetTimer);autoTargetTimer=null}
+  autoTargetCycle++;
+  autoTargetLocked=false;
+  participantUsers=[];
+  participantExpected=new Set();
+  participantReceived=new Set();
+  participantBySocket=Array.from({length:N},()=>[]);
+  appState.participants.clear();
+  appState.targets.clear();
+  appState.kicked.clear();
+  if(appState.participantRenderTimer){
+    if(typeof cancelAnimationFrame==="function")cancelAnimationFrame(appState.participantRenderTimer);
+    else clearTimeout(appState.participantRenderTimer);
+    appState.participantRenderTimer=null;
+  }
+  confirmedKickedTargets.clear();
+  targetList.innerHTML="";
+  userList.innerHTML="";
+  userCount.textContent="0";
+  updateTargetCount();
+}
+function loginAll(){for(let i=0;i<N;i++){const x=cred(i);if(x.username&&x.password)setTimeout(()=>loginOne(i),i*200)}}
+async function logoutAll(){
+  clearTroopClientState();
+  const resetPromise=fetch("/api/troop/reset",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}",cache:"no-store"}).catch(()=>null);
+  await Promise.race([resetPromise,new Promise(r=>setTimeout(r,1000))]);
+  for(let i=0;i<N;i++)logoutOne(i);
+  log(0,"LOGOUT ALL: seluruh WS/session troop lama dibersihkan; aplikasi tetap terbuka");
+}
+// ENTER ALL / LEAVE ALL mengirim ke setiap WS satu per satu dengan jeda 80 ms.
+let roomBatchAction=null;
+const ROOM_SOCKET_DELAY_MS=80;
+const roomBatchSleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function runRoomBatchAction(action,room){
+  if(roomBatchAction){log(0,`ROOM ${roomBatchAction.toUpperCase()} masih berjalan; abaikan ${action.toUpperCase()}`);return}
+  roomBatchAction=action;
+  const messageType=action==="join"?"room.join":"room.leave";
+  let sentCount=0;
+  try{
+    for(let i=0;i<N;i++){
+      if(!clients[i].loggedIn)continue;
+      if(sentCount>0)await roomBatchSleep(ROOM_SOCKET_DELAY_MS);
+      send(i,{type:messageType,room},true);
+      sentCount++;
+    }
+    log(0,`${action==="join"?"ENTER":"LEAVE"} ALL selesai dikirim (${sentCount} WS, jeda antar WS ${ROOM_SOCKET_DELAY_MS} ms)`);
+  }finally{roomBatchAction=null}
+}
+function enterAll(){const room=getRoom();if(!room)return;void runRoomBatchAction("join",room)}
+function leaveAll(){
+  // Leave All always stops every active kick worker first.
+  stopKickAll();const room=getRoom();if(!room)return;void runRoomBatchAction("leave",room)
+}
+function extractUsers(m){
+  let arr=m?.participants??m?.data?.participants??m?.users??m?.data?.users??m?.data?.members??m?.data?.list??m?.data?.results??m?.result?.participants??m?.result?.users??[];
+  if(!Array.isArray(arr)&&arr&&typeof arr==='object')arr=Object.values(arr);
+  if(!Array.isArray(arr))arr=[];
+  return arr.map(x=>typeof x==='string'?x:(x?.username??x?.user??x?.name??x?.nickname??x?.id??"" )).filter(Boolean);
+}
+function showUsers(users,auto=true){
+  const uniq=[...new Map((users||[])
+    .map(x=>String(x||'').trim())
+    .filter(Boolean)
+    .map(u=>[u.toLowerCase(),u])).values()];
+  participantUsers=uniq;
+  userList.innerHTML="";
+
+  // Auto Target is intentionally locked after the first successful selection
+  // for the current List User cycle. Later WS participant responses only
+  // refresh the User list and cannot replace the chosen pattern.
+  // Participant responses can arrive from WS1..WS10 at different times.
+  // Auto Target is scheduled by handleParticipants after the merged snapshot
+  // has had time to settle, so an early partial response cannot lock the
+  // wrong pattern.
+
+  const visible=uniq.filter(u=>!targetHas(u)&&!confirmedKickedTargets.has(u.toLowerCase()));
+  if(!visible.length){
+    const e=document.createElement("div");e.className="empty";
+    e.textContent=uniq.length?"Semua participant sudah dipindahkan ke TARGET":"Tidak ada participant";
+    userList.appendChild(e);
+  }else{
+    visible.forEach(u=>{
+      const e=document.createElement("div");e.className="user-item";
+      const cb=document.createElement("input");cb.type="checkbox";cb.className="user-check";cb.title="Pindahkan ke TARGET";
+      const label=document.createElement("span");label.textContent=u;
+      cb.onchange=()=>{if(cb.checked)moveUserToTarget(u,e,cb)};
+      e.append(cb,label);userList.appendChild(e);
+    });
+  }
+  userCount.textContent=visible.length;
+  updateTargetCount();
+}
+function scheduleAutoTarget(merged,cycle){
+  if(autoTargetLocked||!merged||!merged.length)return;
+  if(autoTargetTimer)clearTimeout(autoTargetTimer);
+
+  // Prefer a complete participant snapshot. A quiet timer is retained as a
+  // fallback so a disconnected/slow WS cannot block auto-target forever.
+  const expectedCount=participantExpected.size;
+  const receivedCount=participantReceived.size;
+  const allReceived=expectedCount>0 && receivedCount>=expectedCount;
+  const waitMs=allReceived?80:1400;
+
+  autoTargetTimer=setTimeout(()=>{
+    if(cycle!==autoTargetCycle||autoTargetLocked)return;
+    const current=[...new Map(participantBySocket.flat()
+      .map(x=>String(x||'').trim())
+      .filter(Boolean)
+      .map(u=>[u.toLowerCase(),u])).values()];
+    const autoTargets=autoAddMatchingTargets(current);
+    if(autoTargets.length){
+      autoTargetLocked=true;
+      log(0,`AUTO TARGET: ${autoTargets.join(", ")}`);
+      showUsers(current,false);
+    }
+  },waitMs);
+}
+function listUser(){
+  const room=getRoom();if(!room)return;
+  if(autoTargetTimer){clearTimeout(autoTargetTimer);autoTargetTimer=null}
+  targetList.innerHTML="";
+  userList.innerHTML="";
+  userCount.textContent="0";
+  autoTargetLocked=false;
+  autoTargetCycle++;
+  participantUsers=[];
+  participantExpected=new Set();
+  participantReceived=new Set();
+  for(let i=0;i<N;i++){
+    participantBySocket[i]=[];
+    if(clients[i].loggedIn)participantExpected.add(i);
+  }
+  updateTargetCount();
+  log(0,"LISTUSER: TARGET dan snapshot participant dikosongkan");
+  let sent=0;
+  for(let i=0;i<N;i++)if(clients[i].loggedIn){if(send(i,{type:"room.participants",room},true))sent++}
+  if(!sent)return;
+}
+function listRoom(){listUser()}
+function handleParticipants(m,i){
+  if(m.type!=="room.participants.result"&&m.type!=="room.participants")return false;
+  const users=extractUsers(m);
+  const merged=applyParticipantSnapshot(i,users);
+  log(i,`LISTROOM: WS${i+1} ${users.length} user | gabungan ${merged.length}`);
+  return true;
+}
+// Patch each socket handler to also process room participant results.
+function loginOne(i){
+  const c=clients[i],x=cred(i);
+  if(!x.username||!x.password){log(i,"Username/password kosong");return}
+  const generation=++c.generation;
+  c.intentionalClose=false;c.loggedIn=false;c.inRoom=false;c.balance=null;setBalance(i,"—");stopPing(i);
+  const previous=c.ws;c.ws=null;if(previous)try{previous.close(1000,"replace")}catch(e){}
+  status(i,"CONNECTING","connecting");log(i,"Connecting local proxy...");
+  const ws=new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`);c.ws=ws;
+  const stale=()=>generation!==c.generation||c.ws!==ws;
+  ws.onopen=()=>{if(stale()){try{ws.close(1000,"stale")}catch(e){};return}log(i,"Proxy OPEN; menunggu auth.required")};
+  ws.onmessage=e=>{
+    if(stale())return;
+    let m;
+    try{m=JSON.parse(e.data)}catch(_){log(i,"RECV non-JSON");return}
+    dispatchSocketEvent(m,i);
+  };
+  ws.onerror=()=>{if(stale())return;status(i,"ERROR","error");log(i,"Local WebSocket proxy error")};
+  ws.onclose=e=>{if(stale())return;stopPing(i);c.loggedIn=false;c.inRoom=false;if(!c.intentionalClose)status(i,"CLOSED","offline");log(i,`CLOSED code=${e.code} reason=${e.reason||"-"}`);if(c.ws===ws)c.ws=null};
+};
+async function kickAll(){
+  if(kickRunning){
+    await stopKickAll();
+    return;
+  }
+  const room=getRoom();
+  if(!room){log(0,'KICKALL ERROR: Room wajib diisi');return;}
+  const selectedTargets=[...targetList.querySelectorAll('.target-item')].map(e=>e.dataset.username).filter(Boolean).slice(0,10);
+  const bruteMode=Math.min(10,Math.max(1,Number(document.getElementById('bruteMode').value)||1));
+  const targets=selectedTargets.slice(0,bruteMode);
+  if(!targets.length){log(0,'KICKALL ERROR: TARGET wajib diisi');return;}
+  const loop=Math.max(1,Number(document.getElementById('loopKick').value)||1);
+  const cfg={room,targets,bruteMode,loop,delaySocket:Math.max(0,Number(document.getElementById('delaySocket').value)||0),delayTarget:Math.max(0,Number(document.getElementById('delayTarget').value)||0),kickLimitPerWs:Math.min(200,Math.max(1,Number(document.getElementById('kickLimitPerWs').value)||100)),};
+  log(0,`KICKALL mulai: Brute ${cfg.bruteMode} | ${targets.length} target | batch=2 | Loop=${cfg.loop} | delaySocket=${cfg.delaySocket}ms | delayTarget=${cfg.delayTarget}ms | limit=${cfg.kickLimitPerWs}/s/WS`);
+  // Set the UI state before awaiting the HTTP response. A very short job can
+  // emit kick.job.finished before fetch() resolves; setting running only after
+  // the response would then leave the button stuck on STOP KICK.
+  kickRunning=true;
+  setKickButtonState(true);
+  try{
+    const r=await fetch('/api/kick-loop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(cfg)});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||d.ok===false)throw new Error(d.error||`HTTP ${r.status}`);
+    log(0,`KICKALL diterima backend: job=${d.jobId||'-'} | ${d.targets??targets.length} target | WS ${d.websockets??0}`);
+  }catch(e){
+    kickRunning=false;
+    setKickButtonState(false);
+    log(0,'KICKALL ERROR: '+e.message);
+  }
+}
+async function stopKickAll(){
+  if(!kickRunning)return;
+  const room=getRoom();
+  try{
+    const r=await fetch('/api/kick-stop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({room})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok||d.ok===false)throw new Error(d.error||`HTTP ${r.status}`);
+    kickRunning=false;
+    setKickButtonState(false);
+    log(0,`KICKALL dihentikan: ${d.stopped??0} job`);
+  }catch(e){log(0,'STOP KICK ERROR: '+e.message)}
+}
+function setKickButtonState(running){
+  const b=document.getElementById("kickAll");
+  if(!b)return;
+  b.textContent=running?"STOP KICK":"KICK ALL";
+  b.classList.toggle("danger",!running);
+  b.classList.toggle("primary",running);
+}
+
+function escapeHtml(v){return String(v).replace(/[&<>'"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[ch]))}
+const bankClient={ws:null,loggedIn:false,pingTimer:null,intentionalClose:false,generation:0,balance:null};
+const bankBalanceEl=document.getElementById("bankBalance"),flatStatusEl=document.getElementById("flatStatus");
+const flatReportBody=document.getElementById('flatReportBody'),flatProgressFill=document.getElementById('flatProgressFill'),flatSummary=document.getElementById('flatSummary');
+const flatRun={active:false,pending:[],pendingByKey:new Map(),sent:0,done:0,failed:0,total:0,totalSent:0};
+function setBankBalance(value){bankClient.balance=value;bankBalanceEl.textContent=formatNominal(value)}
+function bankStatus(text,ok=false){flatStatusEl.textContent=text;flatStatusEl.style.color=ok?"#22c55e":"#94a3b8"}
+function startBankPing(){stopBankPing();bankClient.pingTimer=setInterval(()=>{if(bankClient.ws?.readyState===WebSocket.OPEN)bankClient.ws.send(JSON.stringify({type:"ping"}))},40000)}
+function stopBankPing(){if(bankClient.pingTimer){clearInterval(bankClient.pingTimer);bankClient.pingTimer=null}}
+function bankSend(payload){if(!bankClient.ws||bankClient.ws.readyState!==WebSocket.OPEN){bankStatus("Bank socket belum terhubung.");return false}bankClient.ws.send(JSON.stringify(payload));return true}
+function flatRows(){return [...flatReportBody.querySelectorAll('tr')].map((tr)=>tr)}
+function flatCell(i,col){const tr=document.getElementById(`flat-row-${i}`);return tr?.querySelector(`[data-col="${col}"]`)}
+function updateFlatSummary(){
+  const pct=flatRun.total?Math.min(100,(flatRun.done+flatRun.failed)/flatRun.total*100):0;
+  flatProgressFill.style.width=pct+'%';
+  const total=formatNominal(flatRun.totalSent);
+  flatSummary.innerHTML=`<span>Progress <b>${flatRun.done+flatRun.failed}/${flatRun.total}</b></span><span>Total kirim <b>${total}</b></span><span>Berhasil <b>${flatRun.done}</b></span><span>Gagal <b>${flatRun.failed}</b></span>`;
+}
+function buildFlatReport(rows){
+  flatReportBody.innerHTML=rows.map(r=>`<tr id="flat-row-${r.i}"><td>WS${r.i+1}</td><td>${escapeHtml(r.username||'-')}</td><td data-col="initial">${formatNominal(r.current)}</td><td data-col="target">${formatNominal(r.target)}</td><td data-col="diff">${formatNominal(r.diff)}</td><td data-col="sent">0</td><td data-col="status" class="flat-wait">${r.state}</td><td data-col="bank">${formatNominal(bankClient.balance)}</td></tr>`).join('');
+}
+function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function updateFlatRow(i,patch={}){for(const [k,v] of Object.entries(patch)){const el=flatCell(i,k);if(!el)continue;el.textContent=typeof v==='number'?formatNominal(v):String(v);if(k==='status'){el.className=String(v).includes('GAGAL')?'flat-error':String(v).includes('BERHASIL')?'flat-ok':'flat-wait'}}}
+function flatMessageData(m){
+  const d=m?.data??m?.result??m?.transfer??m;
+  return d&&typeof d==='object'?d:{};
+}
+function extractFlatTransferKey(m){
+  const d=flatMessageData(m);
+  const candidates=[m?.idempotency_key,m?.idempotencyKey,m?.transfer_id,m?.transferId,d?.idempotency_key,d?.idempotencyKey,d?.transfer_id,d?.transferId,d?.request_id,d?.requestId];
+  for(const v of candidates){if(v!==undefined&&v!==null&&String(v).trim())return String(v).trim()}
+  return '';
+}
+function extractFlatTransferUsername(m){
+  const d=flatMessageData(m);
+  const candidates=[m?.to_username,m?.toUsername,m?.username,d?.to_username,d?.toUsername,d?.username,d?.recipient_username,d?.recipientUsername];
+  for(const v of candidates){if(v!==undefined&&v!==null&&String(v).trim())return String(v).trim()}
+  return '';
+}
+function takeFlatPending(m){
+  const key=extractFlatTransferKey(m);
+  if(key&&flatRun.pendingByKey.has(key)){
+    const item=flatRun.pendingByKey.get(key);
+    flatRun.pendingByKey.delete(key);
+    const pos=flatRun.pending.indexOf(item);if(pos>=0)flatRun.pending.splice(pos,1);
+    return item;
+  }
+  const username=extractFlatTransferUsername(m).toLowerCase();
+  if(username){
+    const matches=flatRun.pending.filter(x=>x.username.toLowerCase()===username);
+    if(matches.length===1){
+      const item=matches[0];
+      flatRun.pendingByKey.delete(item.key);
+      flatRun.pending.splice(flatRun.pending.indexOf(item),1);
+      return item;
+    }
+  }
+  // wallet.transfer.result dari API tidak selalu mengembalikan
+  // idempotency_key/to_username. Karena command direct diproses berurutan
+  // pada satu WebSocket, korelasikan feedback tanpa identifier dengan
+  // transfer tertua yang masih pending (FIFO).
+  if(flatRun.pending.length){
+    const item=flatRun.pending.shift();
+    flatRun.pendingByKey.delete(item.key);
+    return item;
+  }
+  return null;
+}
+function finishFlatIfReady(){
+  if(!flatRun.pending.length&&!flatRun.active){
+    bankStatus('Semua feedback transfer diterima. Meminta saldo terbaru WS1–WS10 dan bank...');
+    refreshFlatBalances(window.__flatRows||[]);
+  }
+}
+function handleFlatTransferResult(m){
+  const item=takeFlatPending(m);
+  const b=extractBalance(m);
+  if(b!==null)setBankBalance(b);
+  if(!item){bankStatus('Feedback transfer diterima tetapi ID transfer tidak cocok; laporan tidak diubah.');return}
+  const sent=item.amount;
+  updateFlatRow(item.i,{sent,status:`BERHASIL (${formatNominal(sent)})`,bank:b??bankClient.balance});
+  flatRun.done++;flatRun.totalSent+=sent;updateFlatSummary();
+  finishFlatIfReady();
+}
+function normalizeFlatTransferStatus(message){
+  const raw=String(message||"").trim();
+  if(/internal api status=400\\s+body=\\{"error":"developer_wallet_transfer_failed","message":"minimum balance 10 CR is required"\\}/i.test(raw)
+     || (/developer_wallet_transfer_failed/i.test(raw) && /minimum balance 10 CR is required/i.test(raw))){
+    return "GAGAL: minimal saldo bank 10";
+  }
+  return `GAGAL: ${raw||"transfer ditolak"}`;
+}
+function handleFlatTransferError(m){
+  const item=takeFlatPending(m);
+  if(!item){bankStatus('Error transfer diterima tetapi ID transfer tidak cocok; laporan tidak diubah.');return}
+  const msg=String(m?.data?.message||m?.data?.error||flatMessageData(m)?.message||flatMessageData(m)?.error||'transfer ditolak');
+  updateFlatRow(item.i,{sent:0,status:normalizeFlatTransferStatus(msg),bank:bankClient.balance});
+  flatRun.failed++;updateFlatSummary();
+  finishFlatIfReady();
+}
+function maybeFinishFlatRefresh(){
+  if(!flatRefreshState)return;
+  if(flatRefreshState.pendingWs.size>0 || !flatRefreshState.bankDone)return;
+  const state=flatRefreshState;flatRefreshState=null;
+  for(const r of state.rows){
+    const current=troopBalance(r.i);
+    updateFlatRow(r.i,{initial:current??r.current, diff:current===null?'—':Math.max(0,r.target-current)});
+  }
+  bankStatus(`FLAT selesai & saldo WS1–WS10 dan bank sudah direfresh. ${flatRun.done} berhasil, ${flatRun.failed} gagal.`,flatRun.failed===0);
+}
+function refreshFlatBalances(rows){
+  flatRefreshState={pendingWs:new Set(),bankDone:false,rows};
+  for(let i=0;i<N;i++){
+    if(clients[i].loggedIn && clients[i].ws?.readyState===WebSocket.OPEN){
+      flatRefreshState.pendingWs.add(i);
+      if(!send(i,{type:'wallet.balance'},true))flatRefreshState.pendingWs.delete(i);
+    }
+  }
+  if(bankClient.loggedIn && bankClient.ws?.readyState===WebSocket.OPEN){
+    bankSend({type:'wallet.balance'});
+  }else flatRefreshState.bankDone=true;
+  maybeFinishFlatRefresh();
+}
+function handleBankMessage(m){
+  const type=String(m?.type||'').toLowerCase();
+  if(type==='auth.required'){bankSend({type:'developer.login',username:document.getElementById('usernamebank').value.trim(),password:document.getElementById('passwordbank').value});return}
+  if(type==='session.ready'){bankClient.loggedIn=true;startBankPing();const b=extractBalance(m);if(b!==null)setBankBalance(b);bankSend({type:'wallet.balance'});bankStatus('BANK ONLINE',true);return}
+  if(type==='wallet.balance.result'){const b=extractBalance(m);if(b!==null)setBankBalance(b);if(flatRefreshState){flatRefreshState.bankDone=true;maybeFinishFlatRefresh()}return}
+  if(type==='wallet.transfer.result'){handleFlatTransferResult(m);return}
+  if(type==='session.replaced'){bankClient.loggedIn=false;stopBankPing();bankStatus('BANK SESSION REPLACED');return}
+  if(type==='error'){if(flatRun.pending.length)handleFlatTransferError(m);else{bankClient.loggedIn=false;stopBankPing();bankStatus(normalizeFlatTransferStatus(String(m?.data?.message||m?.data?.error||'unknown error')));}return}
+}
+function loginBank(){
+  const username=document.getElementById('usernamebank').value.trim(),password=document.getElementById('passwordbank').value;
+  if(!username||!password){bankStatus('UsernameBank dan PasswordBank wajib diisi.');return}
+  const gen=++bankClient.generation;bankClient.intentionalClose=false;bankClient.loggedIn=false;stopBankPing();
+  const old=bankClient.ws;bankClient.ws=null;if(old)try{old.close(1000,'replace')}catch(_){}
+  bankStatus('CONNECTING BANK...');setBankBalance('—');
+  const ws=new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/ws`);bankClient.ws=ws;
+  const stale=()=>gen!==bankClient.generation||bankClient.ws!==ws;
+  ws.onopen=()=>{if(stale()){try{ws.close()}catch(_){};return}bankStatus('Menunggu auth bank...')};
+  ws.onmessage=e=>{if(stale())return;try{handleBankMessage(JSON.parse(e.data))}catch(_){} };
+  ws.onerror=()=>{if(stale())return;bankStatus('BANK ERROR');};
+  ws.onclose=()=>{if(stale())return;stopBankPing();bankClient.loggedIn=false;if(!bankClient.intentionalClose)bankStatus('BANK OFFLINE');if(bankClient.ws===ws)bankClient.ws=null};
+}
+function clearFlatState(message='FLAT state dibersihkan.'){
+  flatRun.active=false;
+  flatRun.pending.length=0;
+  flatRun.pendingByKey.clear();
+  flatRun.sent=0;flatRun.done=0;flatRun.failed=0;flatRun.total=0;flatRun.totalSent=0;
+  flatRefreshState=null;
+  window.__flatRows=[];
+  flatReportBody.innerHTML='';
+  flatProgressFill.style.width='0%';
+  updateFlatSummary();
+  bankStatus(message);
+}
+function refreshAllTroopBalances(){
+  let requested=0;
+  for(let i=0;i<N;i++){
+    if(clients[i].loggedIn&&clients[i].ws?.readyState===WebSocket.OPEN){
+      if(send(i,{type:'wallet.balance'},true))requested++;
+    }else setBalance(i,'—');
+  }
+  return requested;
+}
+function refreshTroopBalancesBeforeFlat(){
+  if(flatPreRefreshState){return flatPreRefreshState.promise;}
+  const pendingWs=new Set();
+  for(let i=0;i<N;i++){
+    if(clients[i].loggedIn&&clients[i].ws?.readyState===WebSocket.OPEN){
+      pendingWs.add(i);
+    }else setBalance(i,'—');
+  }
+  if(!pendingWs.size)return Promise.resolve(true);
+  let resolvePromise;
+  const promise=new Promise(resolve=>{resolvePromise=resolve});
+  flatPreRefreshState={pendingWs,resolve:resolvePromise,promise};
+  for(const i of [...pendingWs]){
+    if(!send(i,{type:'wallet.balance'},true))pendingWs.delete(i);
+  }
+  if(pendingWs.size===0){flatPreRefreshState=null;resolvePromise(true);return promise}
+  setTimeout(()=>{
+    if(flatPreRefreshState?.promise!==promise)return;
+    const resolve=flatPreRefreshState.resolve;
+    flatPreRefreshState=null;
+    if(resolve)resolve(false);
+  },7000);
+  return promise;
+}
+function logoutBank(){
+  clearFlatState('FLAT state dibersihkan. Menyegarkan saldo WS1–WS10...');
+  refreshAllTroopBalances();
+  bankClient.intentionalClose=true;bankClient.generation++;stopBankPing();bankClient.loggedIn=false;const ws=bankClient.ws;bankClient.ws=null;if(ws)try{ws.close(1000,'logout')}catch(_){};setBankBalance('—');bankStatus('Bank logout. Saldo WS1–WS10 direfresh.');
+}
+function parseFlatAmount(){const raw=document.getElementById('flatAmount').value.trim().replace(/,/g,'.');const n=Number(raw);return Number.isFinite(n)&&n>=0?n:null}
+function troopBalance(i){const raw=document.getElementById(`balance-${i}`)?.textContent?.trim()||'';const n=Number(raw.replace(/,/g,'.'));return Number.isFinite(n)?n:null}
+function transferId(){return `flat-${Date.now()}-${crypto.randomUUID?.()||Math.random().toString(36).slice(2)}`}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function flatAll(){
+  if(flatRun.active||flatRun.pending.length){bankStatus('FLAT masih memproses feedback API.');return}
+  if(!bankClient.loggedIn){bankStatus('Login bank terlebih dahulu.');return}
+  const target=parseFlatAmount(),pin=document.getElementById('pinbank').value;
+  if(target===null){bankStatus('Jumlah Flat tidak valid.');return}
+  if(!pin){bankStatus('PIN wajib diisi untuk transfer.');return}
+  if(bankClient.ws?.readyState!==WebSocket.OPEN){bankStatus('Bank socket belum OPEN.');return}
+  flatRun.active=true;
+  flatStatusEl.style.color='#f59e0b';
+  bankStatus('Menyegarkan saldo WS1–WS10 sebelum FLAT...');
+  const refreshed=await refreshTroopBalancesBeforeFlat();
+  if(!bankClient.loggedIn||bankClient.ws?.readyState!==WebSocket.OPEN){
+    flatRun.active=false;
+    bankStatus('FLAT dibatalkan: bank terputus saat refresh saldo.');
+    return;
+  }
+  if(!refreshed)bankStatus('Refresh saldo selesai dengan timeout; memakai saldo terbaru yang berhasil diterima.');
+  const rows=[];
+  for(let i=0;i<N;i++){
+    const username=cred(i).username,current=troopBalance(i);
+    let state='SIAP',diff=null;
+    if(!username||!clients[i].loggedIn)state='DILEWATI: WS OFFLINE';
+    else if(current===null)state='DILEWATI: SALDO BELUM ADA';
+    else{diff=target-current;if(diff<=0)state='TIDAK PERLU';}
+    rows.push({i,username,current,target,diff,state});
+  }
+  window.__flatRows=rows;buildFlatReport(rows);flatRun.pending=[];flatRun.pendingByKey.clear();flatRun.sent=0;flatRun.done=0;flatRun.failed=0;flatRun.total=rows.filter(r=>r.diff>0).length;flatRun.totalSent=0;updateFlatSummary();
+  const requiredTotal=rows.reduce((sum,r)=>sum+(r.diff>0?r.diff:0),0);
+  const availableBank=Number(bankClient.balance);
+  if(Number.isFinite(availableBank) && requiredTotal>availableBank+0.000001){
+    for(const r of rows) if(r.diff>0) updateFlatRow(r.i,{status:'GAGAL: saldo bank tidak cukup',sent:0,bank:bankClient.balance});
+    flatRun.failed=flatRun.total;
+    flatRun.active=false;
+    updateFlatSummary();
+    bankStatus(`FLAT dibatalkan: kebutuhan ${formatNominal(requiredTotal)} CR melebihi saldo bank ${formatNominal(availableBank)} CR.`);
+    return;
+  }
+  let seq=0;
+  for(const r of rows){
+    if(r.diff===null||r.diff<=0){updateFlatRow(r.i,{status:r.state,bank:bankClient.balance});continue}
+    if(!bankClient.loggedIn||bankClient.ws?.readyState!==WebSocket.OPEN){updateFlatRow(r.i,{status:'GAGAL: BANK TERPUTUS',bank:bankClient.balance});flatRun.failed++;updateFlatSummary();continue}
+    const milli=Math.round(r.diff*1000);
+    if(milli<=0){updateFlatRow(r.i,{status:'TIDAK PERLU (<0.001)',bank:bankClient.balance});continue}
+    const amount=milli/1000,key=transferId();
+    updateFlatRow(r.i,{status:'MENGIRIM...',sent:amount,bank:bankClient.balance});
+    const pendingItem={i:r.i,username:r.username,amount,key};
+    flatRun.pending.push(pendingItem);
+    flatRun.pendingByKey.set(key,pendingItem);
+    if(!bankSend({type:'wallet.transfer',to_username:r.username,amount_milli_cr:milli,pin,idempotency_key:key})){flatRun.pendingByKey.delete(key);flatRun.pending.pop();updateFlatRow(r.i,{status:'GAGAL: SOCKET BANK',sent:0});flatRun.failed++;updateFlatSummary();continue}
+    seq++;await sleep(125);
+  }
+  flatRun.active=false;
+  updateFlatSummary();
+  if(flatRun.pending.length){
+    bankStatus(`FLAT selesai mengirim ${seq} transfer; menunggu ${flatRun.pending.length} feedback API...`);
+  }else{
+    bankStatus('FLAT selesai. Meminta saldo terbaru WS1–WS10 dan bank...');
+    refreshFlatBalances(rows);
+  }
+}
+
+function safeDownloadName(name){
+  let n=String(name||"migsock").trim().replace(/[^a-zA-Z0-9._ -]/g,"_");
+  if(!n)n="migsock";
+  if(!/\.json$/i.test(n))n+=".json";
+  return n;
+}
+function collectKickSet(){
+  return {
+    version:1,
+    delaySocket:Number(document.getElementById("delaySocket").value)||0,
+    delayTarget:Number(document.getElementById("delayTarget").value)||0,
+    bruteMode:Number(document.getElementById("bruteMode").value)||1,
+    kickLimitPerWs:Number(document.getElementById("kickLimitPerWs").value)||100,
+    loopKick:Number(document.getElementById("loopKick").value)||1,
+    
+    timerKickall:Number(document.getElementById("timerKickall").value)||0
+  };
+}
+function applyKickSet(cfg){
+  document.getElementById("delaySocket").value=String(cfg.delaySocket??10);
+  document.getElementById("delayTarget").value=String(cfg.delayTarget??10);
+  document.getElementById("bruteMode").value=String(Math.min(10,Math.max(1,Number(cfg.bruteMode??1)||1)));
+  document.getElementById("kickLimitPerWs").value=String(Math.min(200,Math.max(1,Number(cfg.kickLimitPerWs??100)||100)));
+  document.getElementById("loopKick").value=String(cfg.loopKick??45);
+  
+  document.getElementById("timerKickall").value=String(cfg.timerKickall??900);
+}
+function saveKickSet(){
+  const name=document.getElementById("saveLoadSet").value.trim() || "kickset";
+  const safeName=name.replace(/[^a-zA-Z0-9_-]+/g,"_").replace(/^_+|_+$/g,"") || "kickset";
+  const blob=new Blob([JSON.stringify(collectKickSet(),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=safeName+".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function loadKickSet(){
+  document.getElementById("loadSetFile").click();
+}
+document.getElementById("loadSetFile").addEventListener("change",async function(){
+  const file=this.files?.[0];
+  if(!file)return;
+  try{
+    const cfg=JSON.parse(await file.text());
+    applyKickSet(cfg);
+    const base=file.name.replace(/\.json$/i,"");
+    if(base)document.getElementById("saveLoadSet").value=base;
+  }catch(_){
+    alert("File SET tidak valid atau rusak.");
+  }finally{
+    this.value="";
+  }
+});
+
+function collectConfig(){
+  const accounts=[];
+  for(let i=0;i<N;i++){
+    accounts.push({
+      username:document.getElementById(`user-${i}`).value,
+      password:document.getElementById(`pass-${i}`).value
+    });
+  }
+  return {
+    version:2,
+    nameTroop:document.getElementById("nametroop").value,
+    start:Number(document.getElementById("start").value),
+    end:Number(document.getElementById("end").value),
+    passwordAll:document.getElementById("passwordAll").value,
+    accounts
+  };
+}
+function saveConfig(){
+  const name=saveLoadEl.value.trim();
+  if(!name){return}
+  const range=getRange();
+  if(!range)return;
+  const cfg=collectConfig();
+  const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=safeDownloadName(name);
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function applyConfig(cfg){
+  const accounts=Array.isArray(cfg.accounts)?cfg.accounts:[];
+  const start=String(cfg.start??"01"), end=String(cfg.end??"10");
+  const a=Number(start), b=Number(end);
+  if(!/^\d+$/.test(start)||!/^\d+$/.test(end)||!Number.isSafeInteger(a)||!Number.isSafeInteger(b)||b-a+1!==N)
+    throw new Error(`File harus berisi rentang tepat ${N} ID.`);
+  document.getElementById("nametroop").value=cfg.nameTroop||"";
+  document.getElementById("start").value=start;
+  document.getElementById("end").value=end;
+  document.getElementById("passwordAll").value=cfg.passwordAll||"";
+  for(let i=0;i<N;i++){
+    const a=accounts[i]||{};
+    document.getElementById(`user-${i}`).value=String(a.username||"");
+    document.getElementById(`pass-${i}`).value=String(a.password||"");
+  }
+  refreshUserList();
+}
+function loadConfig(){
+  document.getElementById("loadFile").click();
+}
+document.getElementById("loadFile").addEventListener("change",async function(e){
+  const file=e.target.files?.[0];
+  if(!file)return;
+  try{
+    const cfg=JSON.parse(await file.text());
+    applyConfig(cfg);
+    document.getElementById("saveLoad").value=file.name.replace(/\.json$/i,"");
+  }catch(err){
+    log(0,"LOAD gagal: "+(err?.message||"File JSON tidak valid."));
+  }finally{
+    e.target.value="";
+  }
+});
+document.getElementById("loginBank").onclick=loginBank;document.getElementById("logoutBank").onclick=logoutBank;document.getElementById("flatButton").onclick=flatAll;document.getElementById("loginAll").onclick=loginAll;document.getElementById("logoutAll").onclick=logoutAll;document.getElementById("enterAll").onclick=enterAll;document.getElementById("leaveAll").onclick=leaveAll;document.getElementById("generateTroop").onclick=generateTroop;document.getElementById("setPass").onclick=setPass;document.getElementById("listRoom").onclick=listUser;document.getElementById("saveConfig").onclick=saveConfig;document.getElementById("loadConfig").onclick=loadConfig;document.getElementById("clearTarget").onclick=clearTargets;document.getElementById("kickAll").onclick=kickAll;document.getElementById("saveSet").onclick=saveKickSet;document.getElementById("loadSet").onclick=loadKickSet;document.getElementById("resetCountdown").onclick=resetCountdownTimer;render();refreshUserList();updateTargetCount();
+</script>
+</body>
+</html>
